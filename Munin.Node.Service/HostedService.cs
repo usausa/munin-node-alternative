@@ -134,6 +134,11 @@ public sealed class HostedService : IHostedService, IDisposable
             {
                 logger.LogError(ex, "Connection error.");
             }
+            finally
+            {
+                // Shutdown
+                pluginManager.ShutdownSession();
+            }
         });
     }
 

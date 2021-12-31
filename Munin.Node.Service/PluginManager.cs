@@ -23,6 +23,14 @@ public sealed class PluginManager
         }
     }
 
+    public void ShutdownSession()
+    {
+        foreach (var initializer in initializers)
+        {
+            initializer.Shutdown();
+        }
+    }
+
     public IPlugin? LookupPlugin(Span<byte> name)
     {
         var values = plugins;
