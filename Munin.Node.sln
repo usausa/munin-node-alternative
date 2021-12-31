@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7611208B-CDC5-4630-8F03-91C653626927}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		Analyzers.ruleset = Analyzers.ruleset
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		LICENSE = LICENSE
+		Munin.Node.sln.DotSettings = Munin.Node.sln.DotSettings
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Munin.Node.Abstractions", "Munin.Node.Abstractions\Munin.Node.Abstractions.csproj", "{F586E9A0-498D-4ADF-B77C-8B06CDAE3773}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Munin.Node.Plugins.Hardware", "Munin.Node.Plugins.Hardware\Munin.Node.Plugins.Hardware.csproj", "{2983CBFF-568D-4BDA-A80D-AEF949BF8280}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Munin.Node.Plugins.PerformanceCounter", "Munin.Node.Plugins.PerformanceCounter\Munin.Node.Plugins.PerformanceCounter.csproj", "{B9C21A3B-D6D0-453B-B301-34CC982B6CBF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Munin.Node.Service", "Munin.Node.Service\Munin.Node.Service.csproj", "{626AE034-7B97-4410-A9BA-347D387F232F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B9C21A3B-D6D0-453B-B301-34CC982B6CBF} = {B9C21A3B-D6D0-453B-B301-34CC982B6CBF}
+		{2983CBFF-568D-4BDA-A80D-AEF949BF8280} = {2983CBFF-568D-4BDA-A80D-AEF949BF8280}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F586E9A0-498D-4ADF-B77C-8B06CDAE3773}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F586E9A0-498D-4ADF-B77C-8B06CDAE3773}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F586E9A0-498D-4ADF-B77C-8B06CDAE3773}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F586E9A0-498D-4ADF-B77C-8B06CDAE3773}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2983CBFF-568D-4BDA-A80D-AEF949BF8280}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2983CBFF-568D-4BDA-A80D-AEF949BF8280}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2983CBFF-568D-4BDA-A80D-AEF949BF8280}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2983CBFF-568D-4BDA-A80D-AEF949BF8280}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9C21A3B-D6D0-453B-B301-34CC982B6CBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9C21A3B-D6D0-453B-B301-34CC982B6CBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9C21A3B-D6D0-453B-B301-34CC982B6CBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9C21A3B-D6D0-453B-B301-34CC982B6CBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{626AE034-7B97-4410-A9BA-347D387F232F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{626AE034-7B97-4410-A9BA-347D387F232F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{626AE034-7B97-4410-A9BA-347D387F232F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{626AE034-7B97-4410-A9BA-347D387F232F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {07F15D20-2EF7-4649-A7EC-2EDBE982A1DB}
+	EndGlobalSection
+EndGlobal
