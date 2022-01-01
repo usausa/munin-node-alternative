@@ -2,11 +2,8 @@ namespace Munin.Node.Plugins.PerformanceCounter;
 
 using System.Diagnostics.CodeAnalysis;
 
-public sealed class PerformanceCounterEntry
+public sealed class ObjectEntry
 {
-    [AllowNull]
-    public string Name { get; set; }
-
     [AllowNull]
     public string Object { get; set; }
 
@@ -16,6 +13,15 @@ public sealed class PerformanceCounterEntry
     public string? Instance { get; set; }
 
     public float? CounterMultiply { get; set; } = 1f;
+}
+
+public sealed class PerformanceCounterEntry
+{
+    [AllowNull]
+    public string Name { get; set; }
+
+    [AllowNull]
+    public ObjectEntry[] Object { get; set; }
 
     [AllowNull]
     public string GraphCategory { get; set; }
