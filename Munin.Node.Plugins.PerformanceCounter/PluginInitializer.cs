@@ -12,14 +12,12 @@ public sealed class PluginInitializer : IPluginInitializer
     public void Setup(IConfiguration config, IServiceCollection services)
     {
         var settings = config.GetSection("PerformanceCounter").Get<Settings>();
-        if (settings.Counters is null)
+        if (settings.Counter?.Length > 0)
         {
-            return;
-        }
-
-        foreach (var counter in settings.Counters)
-        {
-            services.AddSingleton<IPlugin>(new PerformanceCounterPlugin(counter));
+            foreach (var counter in settings.Counter)
+            {
+                services.AddSingleton<IPlugin>(new PerformanceCounterPlugin(counter));
+            }
         }
     }
 }

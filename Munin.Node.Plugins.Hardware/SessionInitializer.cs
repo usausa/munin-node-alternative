@@ -6,12 +6,9 @@ public sealed class SessionInitializer : ISessionInitializer, IDisposable
 {
     private readonly Computer computer;
 
-    private readonly Stack<SensorValue> stack = new();
-
     public SessionInitializer(Computer computer)
     {
         this.computer = computer;
-        // TODO 分配
     }
 
     public void Dispose()
@@ -21,45 +18,19 @@ public sealed class SessionInitializer : ISessionInitializer, IDisposable
 
     public void Setup()
     {
-        var value = Rent();
-        if (value is null)
-        {
-            // TODO
-            value = new SensorValue();
-        }
-
-        SensorValue.Current.Value = value;
+        var value = SensorValuePool.Default.Rent();
 
         lock (computer)
         {
-            // TODO lock
-            // TODO Sensor update
+            SensorValueHelper.Update(computer);
+            SensorValueHelper.Gather(computer, value);
         }
+
+        HardwareContext.Snapshot.Value = value;
     }
 
     public void Shutdown()
     {
-        Return(SensorValue.Current.Value!);
-    }
-
-    private SensorValue? Rent()
-    {
-        lock (stack)
-        {
-            return stack.TryPop(out var value) ? value : null;
-        }
-    }
-
-    private void Return(SensorValue value)
-    {
-        lock (stack)
-        {
-            if (stack.Count > 8)
-            {
-                return;
-            }
-
-            stack.Push(value);
-        }
+        SensorValuePool.Default.Return(HardwareContext.Snapshot.Value!);
     }
 }

@@ -32,5 +32,5 @@ public sealed class PerformanceCounterEntry
 
 public sealed class Settings
 {
-    public PerformanceCounterEntry[]? Counters { get; set; }
+    public PerformanceCounterEntry[]? Counter { get; set; }
 }

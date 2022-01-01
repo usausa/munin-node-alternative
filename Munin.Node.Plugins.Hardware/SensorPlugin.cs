@@ -4,14 +4,14 @@ using System.Text;
 
 public sealed class SensorPlugin : IPlugin
 {
-    private readonly Func<SensorValue, float?[]> accessor;
+    private readonly SensorEntry entry;
 
     public byte[] Name { get; }
 
-    public SensorPlugin(string name, Func<SensorValue, float?[]> accessor)
+    public SensorPlugin(SensorEntry entry)
     {
-        Name = Encoding.ASCII.GetBytes(name);
-        this.accessor = accessor;
+        Name = Encoding.ASCII.GetBytes(entry.Name);
+        this.entry = entry;
     }
 
     public void BuildConfig(BufferSegment buffer)

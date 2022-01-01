@@ -1,5 +1,7 @@
 namespace Munin.Node.Plugins.Hardware;
 
+using System.Diagnostics;
+
 using LibreHardwareMonitor.Hardware;
 
 using Microsoft.Extensions.Configuration;
@@ -10,55 +12,55 @@ public sealed class PluginInitializer : IPluginInitializer
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Ignore")]
     public void Setup(IConfiguration config, IServiceCollection services)
     {
+        // TODO Serializer
         var settings = config.GetSection("Hardware").Get<Settings>();
+        if ((settings.Sensor?.Length == 0) && !settings.MemoryLoad.IsEnable())
+        {
+            return;
+        }
 
         var computer = new Computer
         {
-            IsMotherboardEnabled = settings.IsMotherboardControlEnable() ||
-                                   settings.IsMotherboardFanEnable() ||
-                                   settings.IsMotherboardTemperatureEnable() ||
-                                   settings.IsMotherboardVoltageEnable(),
-            IsCpuEnabled = settings.IsCpuClockEnable() ||
-                           settings.IsCpuLoadEnable() ||
-                           settings.IsCpuPowerEnable() ||
-                           settings.IsCpuTemperatureEnable() ||
-                           settings.IsCpuVoltageEnable(),
-            IsMemoryEnabled = settings.IsMemoryLoadEnable() ||
-                              settings.IsMemoryDataEnable(),
-            IsGpuEnabled = settings.IsGpuClockEnable() ||
-                           settings.IsGpuControlEnable() ||
-                           settings.IsGpuFanEnable() ||
-                           settings.IsGpuLoadEnable() ||
-                           settings.IsGpuPowerEnable() ||
-                           settings.IsGpuTemperatureEnable() ||
-                           settings.IsGpuVoltageEnable(),
-            IsStorageEnabled = settings.IsStorageDataEnable() ||
-                               settings.IsStorageLevelEnable() ||
-                               settings.IsStorageTemperatureEnable() ||
-                               settings.IsStorageThroughputEnable() ||
-                               settings.IsStorageUsedEnable(),
-            IsNetworkEnabled = settings.IsNetworkDataEnable() ||
-                               settings.IsNetworkLoadEnable() ||
-                               settings.IsNetworkThroughputEnable()
+            IsMotherboardEnabled = settings.Sensor.IsHardwareEnable(HardwareType.SuperIO),
+            IsCpuEnabled = settings.Sensor.IsHardwareEnable(HardwareType.Cpu),
+            IsMemoryEnabled = settings.Sensor.IsHardwareEnable(HardwareType.Memory) ||
+                              settings.MemoryLoad.IsEnable(),
+            IsGpuEnabled = settings.Sensor.IsHardwareEnable(HardwareType.GpuAmd) ||
+                           settings.Sensor.IsHardwareEnable(HardwareType.GpuNvidia),
+            //IsStorageEnabled = settings.Sensor.IsHardwareEnable(HardwareType.Storage),    // TODO
+            IsNetworkEnabled = settings.Sensor.IsHardwareEnable(HardwareType.Network)
         };
         computer.Open();
         services.AddSingleton<ISessionInitializer>(new SessionInitializer(computer));
 
-        // TODO センサー一覧は分配してプラグインにも渡す
-
-        // TODO Plugin
-        services.AddSensorPlugin(settings.IsMemoryLoadEnable(), "memory_load", x => x.MemoryLoad);
-
-        // TODO Custom plugin
-    }
-}
-public static class ServiceCollectionExtensions
-{
-    public static void AddSensorPlugin(this IServiceCollection services, bool condition, string name, Func<SensorValue, float?[]> accessor)
-    {
-        if (condition)
+        if (settings.Sensor?.Length > 0)
         {
-            services.AddSingleton<IPlugin>(new SensorPlugin(name, accessor));
+            foreach (var entry in settings.Sensor)
+            {
+                services.AddSingleton<IPlugin>(new SensorPlugin(entry));
+            }
+        }
+
+        if (settings.MemoryLoad.IsEnable())
+        {
+            services.AddSingleton<IPlugin>(new MemoryPlugin(settings.MemoryLoad.Name ?? "memory"));
+        }
+
+        // TODO
+        SensorValueHelper.Update(computer);
+        var values = SensorValuePool.Default.Rent();
+        SensorValueHelper.Gather(computer, values);
+
+        var subset = SensorValuePool.Default.Rent();
+        foreach (var entry in settings.Sensor!)
+        {
+            subset.Clear();
+            SensorValueHelper.Filter(values, subset, entry);
+            System.Diagnostics.Debug.WriteLine("----" + entry.Name);
+            foreach (var value in subset)
+            {
+                Debug.WriteLine($"{value.HardwareType}/{value.SensorType} : {value.Name} : {value.Value}");
+            }
         }
     }
 }
