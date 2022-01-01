@@ -12,7 +12,6 @@ public sealed class PluginInitializer : IPluginInitializer
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Ignore")]
     public void Setup(IConfiguration config, IServiceCollection services)
     {
-        // TODO Serializer
         var settings = config.GetSection("Hardware").Get<Settings>();
         if ((settings.Sensor?.Length == 0) && !settings.MemoryLoad.IsEnable())
         {
