@@ -1,3 +1,5 @@
+using System.Reflection;
+
 using Munin.Node.Service;
 
 #pragma warning disable CA1812
@@ -36,7 +38,7 @@ builder.ConfigureServices((context, services) =>
         var pluginBuilder = new PluginBuilder();
         foreach (var module in settings.Modules)
         {
-            pluginBuilder.AddModule(module);
+            pluginBuilder.AddModule(Path.Combine(Directory.GetCurrentDirectory(), module));
         }
 
         pluginBuilder.Build(context.Configuration, services);

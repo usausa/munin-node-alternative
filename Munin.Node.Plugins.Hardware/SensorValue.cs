@@ -11,7 +11,9 @@ public struct SensorValue
 
     public SensorType SensorType { get; set; }
 
-    public string Name { get; set; }
+    public string HardwareName { get; set; }
+
+    public string SensorName { get; set; }
 
     public float? Value { get; set; }
 }

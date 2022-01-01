@@ -6,14 +6,15 @@ public sealed class PluginBuilder
 {
     private readonly List<Assembly> modules = new();
 
-    public void AddModule(string name)
+    public void AddModule(string path)
     {
-        modules.Add(Assembly.LoadFrom(name + ".dll"));
+        var context = new PluginLoadContext(path);
+        modules.Add(context.LoadFromAssemblyPath(path));
     }
 
     public void Build(IConfiguration config, IServiceCollection services)
     {
-        foreach (var type in modules.Select(x => x.ExportedTypes.Where(typeof(IPluginInitializer).IsAssignableFrom)).SelectMany(x => x))
+        foreach (var type in modules.Select(x => x.GetTypes().Where(typeof(IPluginInitializer).IsAssignableFrom)).SelectMany(x => x))
         {
             var initializer = (IPluginInitializer)Activator.CreateInstance(type)!;
             initializer.Setup(config, services);

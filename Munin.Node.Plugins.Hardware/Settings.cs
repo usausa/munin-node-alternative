@@ -17,19 +17,15 @@ public sealed class SensorEntry
     [AllowNull]
     public string Name { get; set; }
 
-    [JsonConverter(typeof(ComplexHardwareConverter))]
-    public Hardware[]? Hardware { get; set; }
+    public HardwareType[]? Hardware { get; set; }
 
     public SensorType Sensor { get; set; }
 
-    [JsonConverter(typeof(ComplexFilterConverter))]
-    public object[]? Include { get; set; }
+    public FilterEntry[]? Include { get; set; }
 
-    [JsonConverter(typeof(ComplexFilterConverter))]
-    public object[]? Exclude { get; set; }
+    public FilterEntry[]? Exclude { get; set; }
 
-    [JsonConverter(typeof(ComplexFilterConverter))]
-    public object[]? Order { get; set; }
+    public FilterEntry[]? Order { get; set; }
 }
 
 public sealed class CustomEntry
@@ -57,8 +53,7 @@ public static class SettingsExtensions
 
         foreach (var sensor in sensors)
         {
-            if ((sensor.Hardware is null) ||
-                sensor.Hardware.Any(hardware => hardware.HardwareType == type))
+            if ((sensor.Hardware is null) || sensor.Hardware.Any(x => x == type))
             {
                 return true;
             }

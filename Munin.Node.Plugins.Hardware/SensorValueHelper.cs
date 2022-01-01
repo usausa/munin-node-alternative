@@ -46,7 +46,8 @@ public static class SensorValueHelper
             {
                 HardwareType = hardware.HardwareType,
                 SensorType = sensor.SensorType,
-                Name = sensor.Name,
+                HardwareName = hardware.Name,
+                SensorName = sensor.Name,
                 Value = sensor.Value
             });
         }
@@ -82,32 +83,22 @@ public static class SensorValueHelper
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool IsMatch(SensorValue value, object[] filters)
+    private static bool IsMatch(SensorValue value, FilterEntry[] filters)
     {
         for (var i = 0; i < filters.Length; i++)
         {
             var filter = filters[i];
-            if (filter is string name)
+            if ((!filter.Type.HasValue || (filter.Type == value.HardwareType)) &&
+                (String.IsNullOrEmpty(filter.Name) || (filter.Name == value.SensorName)))
             {
-                if (value.Name == name)
-                {
-                    return true;
-                }
-            }
-            else if (filter is FilterEntry entry)
-            {
-                if ((!entry.Type.HasValue || (entry.Type == value.HardwareType)) &&
-                    (String.IsNullOrEmpty(entry.Name) || (entry.Name == value.Name)))
-                {
-                    return true;
-                }
+                return true;
             }
         }
 
         return false;
     }
 
-    public static unsafe void Order(List<SensorValue> source, List<SensorValue> destination, object[] orders)
+    public static unsafe void Order(List<SensorValue> source, List<SensorValue> destination, FilterEntry[] orders)
     {
         using var processed = source.Count > 2048
             ? new ValueBitMap(source.Count / 8)

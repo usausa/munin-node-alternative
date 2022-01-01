@@ -27,7 +27,7 @@ public sealed class PluginInitializer : IPluginInitializer
                               settings.MemoryLoad.IsEnable(),
             IsGpuEnabled = settings.Sensor.IsHardwareEnable(HardwareType.GpuAmd) ||
                            settings.Sensor.IsHardwareEnable(HardwareType.GpuNvidia),
-            //IsStorageEnabled = settings.Sensor.IsHardwareEnable(HardwareType.Storage),    // TODO
+            IsStorageEnabled = settings.Sensor.IsHardwareEnable(HardwareType.Storage),
             IsNetworkEnabled = settings.Sensor.IsHardwareEnable(HardwareType.Network)
         };
         computer.Open();
@@ -59,7 +59,7 @@ public sealed class PluginInitializer : IPluginInitializer
             System.Diagnostics.Debug.WriteLine("----" + entry.Name);
             foreach (var value in subset)
             {
-                Debug.WriteLine($"{value.HardwareType}/{value.SensorType} : {value.Name} : {value.Value}");
+                Debug.WriteLine($"{value.HardwareType}/{value.SensorType} : {value.HardwareName} / {value.SensorName} : {value.Value}");
             }
         }
     }
