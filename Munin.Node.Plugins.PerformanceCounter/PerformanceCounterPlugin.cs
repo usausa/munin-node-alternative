@@ -25,13 +25,6 @@ public sealed class PerformanceCounterPlugin : IPlugin, IDisposable
         {
             counter.NextValue();
         }
-
-        // TODO
-        Debug.WriteLine($"[{entry.Name}]");
-        foreach (var counter in counters)
-        {
-            Debug.WriteLine($"{counter.CategoryName} {counter.CounterName} {counter.InstanceName} : {counter.NextValue()}");
-        }
     }
 
     public void Dispose()

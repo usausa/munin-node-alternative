@@ -1,7 +1,5 @@
 namespace Munin.Node.Plugins.Hardware;
 
-using System.Diagnostics;
-
 using LibreHardwareMonitor.Hardware;
 
 using Microsoft.Extensions.Configuration;
@@ -43,23 +41,6 @@ public sealed class PluginInitializer : IPluginInitializer
         if (settings.MemoryLoad.IsEnable())
         {
             services.AddSingleton<IPlugin>(new MemoryPlugin(settings.MemoryLoad.Name ?? "memory"));
-        }
-
-        // TODO
-        SensorValueHelper.Update(computer);
-        var values = SensorValuePool.Default.Rent();
-        SensorValueHelper.Gather(computer, values);
-
-        var subset = SensorValuePool.Default.Rent();
-        foreach (var entry in settings.Sensor!)
-        {
-            subset.Clear();
-            SensorValueHelper.Filter(values, subset, entry);
-            System.Diagnostics.Debug.WriteLine("----" + entry.Name);
-            foreach (var value in subset)
-            {
-                Debug.WriteLine($"{value.HardwareType}/{value.SensorType} : {value.HardwareName} / {value.SensorName} : {value.Value}");
-            }
         }
     }
 }
