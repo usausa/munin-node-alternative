@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 public sealed class ObjectEntry
 {
     [AllowNull]
-    public string Object { get; set; }
+    public string Category { get; set; }
 
     [AllowNull]
     public string Counter { get; set; }

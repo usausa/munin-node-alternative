@@ -18,31 +18,20 @@ public sealed class PerformanceCounterPlugin : IPlugin, IDisposable
         this.entry = entry;
         Name = Encoding.ASCII.GetBytes(entry.Name);
 
-        // TODO 複数対応
-        //Dump("cpu", Prepare("Processor", "% Processor Time", "_Total"));
-        //// Memory Usage, GAUGE, AREA, -l 0 -u 100
-        //Dump("memory", Prepare("Memory", "% Committed Bytes In Use"));
-        //// Disk Usage(逆)
-        //Dump("disk", Prepare("LogicalDisk", "% Free Space"));
-        //// Uptime, GAUGE, AREA, -b 1000 -l 0
-        //Dump("uptime", Prepare("System", "System Up Time"), Single.Parse("1.1574074074074073e-005"));
-        //// Processor Queue Length, system, --base 1000 -l 0, -base 1000 -l 0, LINE
-        //Dump("processorqueue", Prepare("System", "Processor Queue Length"));
-        //// Disk Time, disk, --base 1000 -l 0, LINE
-        //Dump("disktime", Prepare("LogicalDisk", "% Disk Time"));
-        //// Disk Queue Length, disk, --base 1000 -l 0, LINE
-        //Dump("diskqueue", Prepare("PhysicalDisk", "Current Disk Queue Length"));
-        //// Ex
-        //Dump("memory_page", Prepare("Memory", "Pages/sec"));
-        //Dump("handle", Prepare("Process V2", "Handle Count", "_Total"));
-        //Dump("process", Prepare("System", "Processes"));
-        //Dump("thread", Prepare("Process V2", "Thread Count", "_Total"));
-        //Dump("tcp4_connections_established", Prepare("TCPv4", "Connections Established"));
-
-        // TODO 一度ダミーNextValue()の必要あり
+        counters = entry.Object
+            .SelectMany(x => Create(x.Category, x.Counter, x.Instance))
+            .ToArray();
+        foreach (var counter in counters)
+        {
+            counter.NextValue();
+        }
 
         // TODO
-        counters = Array.Empty<PerformanceCounter>();
+        Debug.WriteLine($"[{entry.Name}]");
+        foreach (var counter in counters)
+        {
+            Debug.WriteLine($"{counter.CategoryName} {counter.CounterName} {counter.InstanceName} : {counter.NextValue()}");
+        }
     }
 
     public void Dispose()
@@ -53,22 +42,28 @@ public sealed class PerformanceCounterPlugin : IPlugin, IDisposable
         }
     }
 
-    //private static PerformanceCounter[] Create(string categoryName, string counterName, string? instanceName = null)
-    //{
-    //    if (!String.IsNullOrEmpty(instanceName))
-    //    {
-    //        return new[] { new PerformanceCounter(categoryName, counterName, instanceName) };
-    //    }
-
-    //    var pcc = new PerformanceCounterCategory(categoryName);
-    //    if (pcc.CategoryType == PerformanceCounterCategoryType.SingleInstance)
-    //    {
-    //        return new[] { new PerformanceCounter(categoryName, counterName) };
-    //    }
-
-    //    var instanceNames = pcc.GetInstanceNames().OrderBy(x => x).ToArray();
-    //    return instanceNames.Select(x => new PerformanceCounter(categoryName, counterName, x)).ToArray();
-    //}
+    private static IEnumerable<PerformanceCounter> Create(string category, string counter, string? instance = null)
+    {
+        if (!String.IsNullOrEmpty(instance))
+        {
+            yield return new PerformanceCounter(category, counter, instance);
+        }
+        else
+        {
+            var pcc = new PerformanceCounterCategory(category);
+            if (pcc.CategoryType == PerformanceCounterCategoryType.SingleInstance)
+            {
+                yield return new PerformanceCounter(category, counter);
+            }
+            else
+            {
+                foreach (var name in pcc.GetInstanceNames())
+                {
+                    yield return new PerformanceCounter(category, counter, name);
+                }
+            }
+        }
+    }
 
     public void BuildConfig(BufferSegment buffer)
     {
