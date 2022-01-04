@@ -26,6 +26,20 @@ public sealed class SensorEntry
     public FilterEntry[]? Exclude { get; set; }
 
     public FilterEntry[]? Order { get; set; }
+
+    [AllowNull]
+    public string GraphCategory { get; set; }
+
+    [AllowNull]
+    public string GraphTitle { get; set; }
+
+    [AllowNull]
+    public string GraphLabel { get; set; }
+
+    [AllowNull]
+    public string GraphArgs { get; set; }
+
+    public bool GraphScale { get; set; } = true;
 }
 
 public sealed class CustomEntry
@@ -33,6 +47,18 @@ public sealed class CustomEntry
     public string? Name { get; set; }
 
     public bool Enable { get; set; }
+
+    [AllowNull]
+    public string GraphCategory { get; set; }
+
+    [AllowNull]
+    public string GraphTitle { get; set; }
+
+    [AllowNull]
+    public string GraphLabel { get; set; }
+
+    [AllowNull]
+    public string GraphArgs { get; set; }
 }
 
 public sealed class Settings

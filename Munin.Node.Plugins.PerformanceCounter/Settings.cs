@@ -30,8 +30,14 @@ public sealed class PerformanceCounterEntry
     public string GraphTitle { get; set; }
 
     [AllowNull]
+    public string GraphLabel { get; set; }
+
+    [AllowNull]
     public string GraphArgs { get; set; }
 
+    public bool GraphScale { get; set; } = true;
+
+    // TODO
     [AllowNull]
     public string GraphDraw { get; set; }
 }
