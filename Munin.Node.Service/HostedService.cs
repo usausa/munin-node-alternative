@@ -67,9 +67,6 @@ public sealed class HostedService : IHostedService, IDisposable
                     return;
                 }
 
-                // Setup
-                pluginManager.SetupSession();
-
                 do
                 {
                     // Read line
@@ -131,11 +128,6 @@ public sealed class HostedService : IHostedService, IDisposable
             catch (Exception ex)
             {
                 logger.LogError(ex, "Connection error.");
-            }
-            finally
-            {
-                // Shutdown
-                pluginManager.ShutdownSession();
             }
         });
     }

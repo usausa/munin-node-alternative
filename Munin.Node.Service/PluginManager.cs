@@ -5,30 +5,11 @@ using System.Linq;
 
 public sealed class PluginManager
 {
-    private readonly ISessionInitializer[] initializers;
-
     private readonly IPlugin[] plugins;
 
-    public PluginManager(IEnumerable<ISessionInitializer> initializers, IEnumerable<IPlugin> plugins)
+    public PluginManager(IEnumerable<IPlugin> plugins)
     {
-        this.initializers = initializers.ToArray();
         this.plugins = plugins.ToArray();
-    }
-
-    public void SetupSession()
-    {
-        foreach (var initializer in initializers)
-        {
-            initializer.Setup();
-        }
-    }
-
-    public void ShutdownSession()
-    {
-        foreach (var initializer in initializers)
-        {
-            initializer.Shutdown();
-        }
     }
 
     public IPlugin? LookupPlugin(Span<byte> name)

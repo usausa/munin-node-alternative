@@ -1,18 +1,116 @@
 namespace Munin.Node.Plugins.Hardware;
 
-using System.Runtime.CompilerServices;
+using System.Diagnostics;
 using System.Text;
+
+using LibreHardwareMonitor.Hardware;
 
 internal sealed class SensorPlugin : IPlugin
 {
+#pragma warning disable CS8618
+#pragma warning disable SA1401
+    private sealed class SensorInfo
+    {
+        public byte[] Field;
+
+        public byte[] Label;
+
+        public ISensor Sensor;
+    }
+#pragma warning restore SA1401
+#pragma warning restore CS8618
+
     private readonly SensorEntry entry;
+
+    private readonly Computer computer;
+
+    private readonly IHardware[] uniqHardware;
+
+    private readonly SensorInfo[] sensors;
 
     public byte[] Name { get; }
 
-    public SensorPlugin(SensorEntry entry)
+    public SensorPlugin(Computer computer, SensorEntry entry)
     {
-        Name = Encoding.ASCII.GetBytes(entry.Name);
+        this.computer = computer;
         this.entry = entry;
+        Name = Encoding.ASCII.GetBytes(entry.Name);
+
+        var target = computer.Hardware.SelectMany(Filter);
+        if (entry.Order is not null)
+        {
+            target = target.OrderBy(x => IsMatch(x, entry.Order));
+        }
+
+        // TODO label
+        sensors = target
+            .Select(x => new SensorInfo
+            {
+                Field = Encoding.ASCII.GetBytes(x.Identifier.ToString().Replace('/', '_')),
+                Label = Encoding.ASCII.GetBytes(x.Name),
+                Sensor = x
+            })
+            .ToArray();
+        var set = new HashSet<string>();
+        uniqHardware = sensors
+            .Where(x => set.Add(x.Sensor.Hardware.Identifier.ToString()))
+            .Select(x => x.Sensor.Hardware)
+            .ToArray();
+
+        // TODO test
+        Debug.WriteLine($"[{entry.Name}]");
+        foreach (var hardware in uniqHardware)
+        {
+            Debug.WriteLine($"Update: {hardware.Name}");
+            hardware.Update();
+        }
+
+        foreach (var sensor in sensors)
+        {
+            Debug.WriteLine($"Value: {sensor.Sensor.Hardware.Name}/{sensor.Sensor.Name} : {sensor.Sensor.Value}");
+        }
+    }
+
+    public IEnumerable<ISensor> Filter(IHardware hardware)
+    {
+        foreach (var subHardware in hardware.SubHardware)
+        {
+            foreach (var sensor in Filter(subHardware))
+            {
+                yield return sensor;
+            }
+        }
+
+        foreach (var sensor in hardware.Sensors)
+        {
+            if (sensor.SensorType != entry.Sensor)
+            {
+                continue;
+            }
+
+            if ((entry.Hardware?.Length > 0) && (Array.IndexOf(entry.Hardware, sensor.Hardware.HardwareType) < 0))
+            {
+                continue;
+            }
+
+            if ((entry.Include?.Length > 0) && !IsMatch(sensor, entry.Include))
+            {
+                continue;
+            }
+
+            if ((entry.Exclude?.Length > 0) && IsMatch(sensor, entry.Exclude))
+            {
+                continue;
+            }
+
+            yield return sensor;
+        }
+    }
+
+    public static bool IsMatch(ISensor sensor, FilterEntry[] filters)
+    {
+        return filters.Any(x => (!x.Type.HasValue || (x.Type == sensor.Hardware.HardwareType)) &&
+                                (String.IsNullOrEmpty(x.Name) || (x.Name == sensor.Name)));
     }
 
     public void BuildConfig(BufferSegment buffer)
@@ -41,71 +139,48 @@ internal sealed class SensorPlugin : IPlugin
             buffer.AddLineFeed();
         }
 
-        var subset = SensorValuePool.Default.Rent();
-        subset.Clear();
-        SensorValueHelper.Filter(HardwareContext.Snapshot.Value!, subset, entry);
-
-        for (var i = 0; i < subset.Count; i++)
+        foreach (var sensor in sensors)
         {
-            var value = subset[i];
-            var hardwareName = value.HardwareType.ToNameBytes();
-            var sensorName = value.SensorType.ToNameBytes();
             // label
-            MakeFieldName(buffer, hardwareName, sensorName, value.Index);
+            buffer.Add(sensor.Field);
             buffer.Add(".label ");
-            buffer.Add(value.SensorName);   // TODO name
+            buffer.Add(sensor.Label);
             buffer.AddLineFeed();
             // draw
             if (!String.IsNullOrEmpty(entry.GraphDraw))
             {
-                MakeFieldName(buffer, hardwareName, sensorName, value.Index);
+                buffer.Add(sensor.Field);
                 buffer.Add(".draw ");
                 buffer.Add(entry.GraphDraw);    // TODO custom
                 buffer.AddLineFeed();
             }
-            // TODO type
-            // TODO color
-            // TODO critical/warning
         }
-
-        SensorValuePool.Default.Return(subset);
 
         buffer.AddEndLine();
     }
 
     public void BuildFetch(BufferSegment buffer)
     {
-        var subset = SensorValuePool.Default.Rent();
-        subset.Clear();
-        SensorValueHelper.Filter(HardwareContext.Snapshot.Value!, subset, entry);
-
-        for (var i = 0; i < subset.Count; i++)
+        lock (computer)
         {
-            var value = subset[i];
-            if (value.Value.HasValue)
+            foreach (var hardware in uniqHardware)
             {
-                var hardwareName = value.HardwareType.ToNameBytes();
-                var sensorName = value.SensorType.ToNameBytes();
-                // value
-                MakeFieldName(buffer, hardwareName, sensorName, value.Index);
-                buffer.Add(".value ");
-                buffer.Add(value.Value.Value);
-                buffer.AddLineFeed();
+                hardware.Update();
+            }
+
+            foreach (var sensor in sensors)
+            {
+                if (sensor.Sensor.Value.HasValue)
+                {
+                    // value
+                    buffer.Add(sensor.Field);
+                    buffer.Add(".value ");
+                    buffer.Add(sensor.Sensor.Value.Value);
+                    buffer.AddLineFeed();
+                }
             }
         }
 
-        SensorValuePool.Default.Return(subset);
-
         buffer.AddEndLine();
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static void MakeFieldName(BufferSegment buffer, byte[] hardwareName, byte[] sensorName, int index)
-    {
-        buffer.Add(hardwareName);
-        buffer.Add((byte)'_');
-        buffer.Add(sensorName);
-        buffer.Add((byte)'_');
-        buffer.Add(index);
     }
 }

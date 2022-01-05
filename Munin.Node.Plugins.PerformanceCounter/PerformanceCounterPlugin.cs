@@ -9,7 +9,7 @@ internal sealed class PerformanceCounterPlugin : IPlugin, IDisposable
 {
 #pragma warning disable CS8618
 #pragma warning disable SA1401
-    private class CounterInfo
+    private sealed class CounterInfo
     {
         public byte[] Field;
 
@@ -159,6 +159,7 @@ internal sealed class PerformanceCounterPlugin : IPlugin, IDisposable
             buffer.Add(counter.Multiply.HasValue
                 ? counter.Counter.NextValue() * counter.Multiply.Value
                 : counter.Counter.NextValue());
+            buffer.AddLineFeed();
         }
 
         buffer.AddEndLine();

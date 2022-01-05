@@ -28,13 +28,13 @@ internal sealed class PluginInitializer : IPluginInitializer
             IsNetworkEnabled = settings.Sensor.IsHardwareEnable(HardwareType.Network)
         };
         computer.Open();
-        services.AddSingleton<ISessionInitializer>(new SessionInitializer(computer));
+        HardwareHelper.Update(computer);
 
         if (settings.Sensor?.Length > 0)
         {
             foreach (var entry in settings.Sensor)
             {
-                services.AddSingleton<IPlugin>(new SensorPlugin(entry));
+                services.AddSingleton<IPlugin>(new SensorPlugin(computer, entry));
             }
         }
 
