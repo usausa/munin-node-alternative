@@ -46,7 +46,7 @@ internal sealed class SensorPlugin : IPlugin
         sensors = target
             .Select(x => new SensorInfo
             {
-                Field = Encoding.ASCII.GetBytes(x.Identifier.ToString().Replace('/', '_')),
+                Field = Encoding.ASCII.GetBytes(x.Identifier.ToString()[1..].Replace('/', '_')),
                 Label = Encoding.ASCII.GetBytes(x.Name),
                 Sensor = x
             })

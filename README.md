@@ -1,10 +1,11 @@
-# munin-node-alternative
+# munin-node-alternative(in progress)
+
+munin-node build with .net.
 
 ## Milestone
 
 ### 0.1
 
-* Renew hadrware plugin
 * Update setting entry
 * Memory hardware plugin
 
