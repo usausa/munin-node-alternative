@@ -1,8 +1,9 @@
 namespace Munin.Node.Plugins.Hardware;
 
+using System.Runtime.CompilerServices;
 using System.Text;
 
-public sealed class SensorPlugin : IPlugin
+internal sealed class SensorPlugin : IPlugin
 {
     private readonly SensorEntry entry;
 
@@ -47,23 +48,17 @@ public sealed class SensorPlugin : IPlugin
         for (var i = 0; i < subset.Count; i++)
         {
             var value = subset[i];
+            var hardwareName = value.HardwareType.ToNameBytes();
+            var sensorName = value.SensorType.ToNameBytes();
             // label
-            buffer.Add(value.HardwareType.ToString()); // TODO field
-            buffer.Add("_");
-            buffer.Add(value.SensorType.ToString());
-            buffer.Add("_");
-            buffer.Add(value.Index);
+            MakeFieldName(buffer, hardwareName, sensorName, value.Index);
             buffer.Add(".label ");
             buffer.Add(value.SensorName);   // TODO name
             buffer.AddLineFeed();
             // draw
             if (!String.IsNullOrEmpty(entry.GraphDraw))
             {
-                buffer.Add(value.HardwareType.ToString()); // TODO field
-                buffer.Add("_");
-                buffer.Add(value.SensorType.ToString());
-                buffer.Add("_");
-                buffer.Add(value.Index);
+                MakeFieldName(buffer, hardwareName, sensorName, value.Index);
                 buffer.Add(".draw ");
                 buffer.Add(entry.GraphDraw);    // TODO custom
                 buffer.AddLineFeed();
@@ -89,12 +84,10 @@ public sealed class SensorPlugin : IPlugin
             var value = subset[i];
             if (value.Value.HasValue)
             {
+                var hardwareName = value.HardwareType.ToNameBytes();
+                var sensorName = value.SensorType.ToNameBytes();
                 // value
-                buffer.Add(value.HardwareType.ToString()); // TODO field
-                buffer.Add("_");
-                buffer.Add(value.SensorType.ToString());
-                buffer.Add("_");
-                buffer.Add(value.Index);
+                MakeFieldName(buffer, hardwareName, sensorName, value.Index);
                 buffer.Add(".value ");
                 buffer.Add(value.Value.Value);
                 buffer.AddLineFeed();
@@ -104,5 +97,15 @@ public sealed class SensorPlugin : IPlugin
         SensorValuePool.Default.Return(subset);
 
         buffer.AddEndLine();
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static void MakeFieldName(BufferSegment buffer, byte[] hardwareName, byte[] sensorName, int index)
+    {
+        buffer.Add(hardwareName);
+        buffer.Add((byte)'_');
+        buffer.Add(sensorName);
+        buffer.Add((byte)'_');
+        buffer.Add(index);
     }
 }

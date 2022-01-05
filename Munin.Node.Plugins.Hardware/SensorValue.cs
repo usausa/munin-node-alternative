@@ -1,21 +1,22 @@
 namespace Munin.Node.Plugins.Hardware;
 
-using System.Diagnostics.CodeAnalysis;
-
 using LibreHardwareMonitor.Hardware;
 
-[SuppressMessage("Microsoft.Performance", "CA1815:Override equals and operator equals on value types", Justification = "Ignore")]
-public struct SensorValue
+#pragma warning disable CA1051
+#pragma warning disable CA1815
+internal struct SensorValue
 {
-    public HardwareType HardwareType { get; set; }
+    public HardwareType HardwareType;
 
-    public SensorType SensorType { get; set; }
+    public SensorType SensorType;
 
-    public int Index { get; set; }
+    public int Index;
 
-    public string HardwareName { get; set; }
+    public string HardwareName;
 
-    public string SensorName { get; set; }
+    public string SensorName;
 
-    public float? Value { get; set; }
+    public float? Value;
 }
+#pragma warning restore CA1815
+#pragma warning restore CA1051

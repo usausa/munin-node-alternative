@@ -2,7 +2,7 @@ namespace Munin.Node.Plugins.Hardware;
 
 using System.Text;
 
-public sealed class MemoryPlugin : IPlugin
+internal sealed class MemoryPlugin : IPlugin
 {
     public byte[] Name { get; }
 

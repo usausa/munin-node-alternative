@@ -1,5 +1,3 @@
-using System.Reflection;
-
 using Munin.Node.Service;
 
 #pragma warning disable CA1812

@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 using LibreHardwareMonitor.Hardware;
 
-public static class SensorValueHelper
+internal static class SensorValueHelper
 {
     public static void Update(Computer computer)
     {

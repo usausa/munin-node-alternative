@@ -5,11 +5,26 @@ using System.Runtime.Versioning;
 using System.Text;
 
 [SupportedOSPlatform("windows")]
-public sealed class PerformanceCounterPlugin : IPlugin, IDisposable
+internal sealed class PerformanceCounterPlugin : IPlugin, IDisposable
 {
+#pragma warning disable CS8618
+#pragma warning disable SA1401
+    private class CounterInfo
+    {
+        public byte[] Field;
+
+        public byte[] Label;
+
+        public PerformanceCounter Counter;
+
+        public float? Multiply;
+    }
+#pragma warning restore SA1401
+#pragma warning restore CS8618
+
     private readonly PerformanceCounterEntry entry;
 
-    private readonly PerformanceCounter[] counters;
+    private readonly CounterInfo[] counters;
 
     public byte[] Name { get; }
 
@@ -18,12 +33,42 @@ public sealed class PerformanceCounterPlugin : IPlugin, IDisposable
         this.entry = entry;
         Name = Encoding.ASCII.GetBytes(entry.Name);
 
-        counters = entry.Object
-            .SelectMany(x => Create(x.Category, x.Counter, x.Instance))
-            .ToArray();
+        var list = entry.Object
+            .Select(x => new { Object = x, Counters = Create(x.Category, x.Counter, x.Instance).ToList() })
+            .ToList();
+        var isSingle = list.All(x => x.Counters.Count == 1);
+        if (list.Count == 1)
+        {
+            // TODO label
+            counters = list[0].Counters
+                .Select((x, i) => new CounterInfo
+                {
+                    Field = isSingle ? Name : Encoding.ASCII.GetBytes($"{entry.Name}_{i}"),
+                    Label = Encoding.ASCII.GetBytes(String.IsNullOrEmpty(x.InstanceName) ? $"{i}" : x.InstanceName),
+                    Counter = x,
+                    Multiply = list[0].Object.Multiply
+                })
+                .ToArray();
+        }
+        else
+        {
+            // TODO label
+            counters = list
+                .SelectMany((x, i) => x.Counters
+                    .Select((y, j) => new CounterInfo
+                    {
+                        Field = Encoding.ASCII.GetBytes(isSingle ? $"{entry.Name}_{i}" : $"{entry.Name}_{i}_{j}"),
+                        Label = Encoding.ASCII.GetBytes(String.IsNullOrEmpty(y.InstanceName) ? (isSingle ? $"{i}" : $"{i}_{j}") : y.InstanceName),
+                        Counter = y,
+                        Multiply = x.Object.Multiply
+                    }))
+                .ToArray();
+        }
+
+        // Dummy
         foreach (var counter in counters)
         {
-            counter.NextValue();
+            counter.Counter.NextValue();
         }
     }
 
@@ -31,7 +76,7 @@ public sealed class PerformanceCounterPlugin : IPlugin, IDisposable
     {
         foreach (var counter in counters)
         {
-            counter.Dispose();
+            counter.Counter.Dispose();
         }
     }
 
@@ -84,36 +129,21 @@ public sealed class PerformanceCounterPlugin : IPlugin, IDisposable
             buffer.AddLineFeed();
         }
 
-        for (var i = 0; i < counters.Length; i++)
+        foreach (var counter in counters)
         {
-            var counter = counters[i];
             // label
-            // TODO field
-            buffer.Add(Name);
-            buffer.Add(i);
+            buffer.Add(counter.Field);
             buffer.Add(".label ");
-            // TODO name
-            if (String.IsNullOrEmpty(counter.InstanceName))
-            {
-                buffer.Add(i);
-            }
-            else
-            {
-                buffer.Add(counter.InstanceName);
-            }
+            buffer.Add(counter.Label);
+            buffer.AddLineFeed();
             // draw
             if (!String.IsNullOrEmpty(entry.GraphDraw))
             {
-                // TODO field
-                buffer.Add(Name);
-                buffer.Add(i);
+                buffer.Add(counter.Field);
                 buffer.Add(".draw ");
                 buffer.Add(entry.GraphDraw);    // TODO custom
                 buffer.AddLineFeed();
             }
-            // TODO type
-            // TODO color
-            // TODO critical/warning
         }
 
         buffer.AddEndLine();
@@ -121,16 +151,14 @@ public sealed class PerformanceCounterPlugin : IPlugin, IDisposable
 
     public void BuildFetch(BufferSegment buffer)
     {
-        for (var i = 0; i < counters.Length; i++)
+        foreach (var counter in counters)
         {
-            var counter = counters[i];
             // value
-            // TODO field
-            buffer.Add(Name);
-            buffer.Add(i);
+            buffer.Add(counter.Field);
             buffer.Add(".value ");
-            // TODO name
-            buffer.Add(counter.NextValue());
+            buffer.Add(counter.Multiply.HasValue
+                ? counter.Counter.NextValue() * counter.Multiply.Value
+                : counter.Counter.NextValue());
         }
 
         buffer.AddEndLine();

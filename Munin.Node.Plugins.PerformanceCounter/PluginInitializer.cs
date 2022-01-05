@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 [SupportedOSPlatform("windows")]
-public sealed class PluginInitializer : IPluginInitializer
+internal sealed class PluginInitializer : IPluginInitializer
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Ignore")]
     public void Setup(IConfiguration config, IServiceCollection services)

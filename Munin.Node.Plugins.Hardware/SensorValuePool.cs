@@ -1,6 +1,6 @@
 namespace Munin.Node.Plugins.Hardware;
 
-public sealed class SensorValuePool
+internal sealed class SensorValuePool
 {
     public static SensorValuePool Default { get; } = new();
 

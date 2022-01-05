@@ -4,14 +4,14 @@ using System.Diagnostics.CodeAnalysis;
 
 using LibreHardwareMonitor.Hardware;
 
-public class FilterEntry
+internal class FilterEntry
 {
     public HardwareType? Type { get; set; }
 
     public string? Name { get; set; }
 }
 
-public sealed class SensorEntry
+internal sealed class SensorEntry
 {
     [AllowNull]
     public string Name { get; set; }
@@ -43,7 +43,7 @@ public sealed class SensorEntry
     public string? GraphDraw { get; set; }
 }
 
-public sealed class CustomEntry
+internal sealed class CustomEntry
 {
     public string? Name { get; set; }
 
@@ -60,14 +60,14 @@ public sealed class CustomEntry
     public bool? GraphScale { get; set; }
 }
 
-public sealed class Settings
+internal sealed class Settings
 {
     public SensorEntry[]? Sensor { get; set; }
 
     public CustomEntry? MemoryLoad { get; set; }
 }
 
-public static class SettingsExtensions
+internal static class SettingsExtensions
 {
     public static bool IsHardwareEnable([NotNullWhen(true)] this SensorEntry[]? sensors, HardwareType type)
     {

@@ -2,7 +2,7 @@ namespace Munin.Node.Plugins.Hardware;
 
 using LibreHardwareMonitor.Hardware;
 
-public sealed class SessionInitializer : ISessionInitializer, IDisposable
+internal sealed class SessionInitializer : ISessionInitializer, IDisposable
 {
     private readonly Computer computer;
 
