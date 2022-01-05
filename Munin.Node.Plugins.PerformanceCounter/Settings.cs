@@ -12,7 +12,7 @@ public sealed class ObjectEntry
 
     public string? Instance { get; set; }
 
-    public float? CounterMultiply { get; set; } = 1f;
+    public float? CounterMultiply { get; set; }
 }
 
 public sealed class PerformanceCounterEntry
@@ -30,16 +30,14 @@ public sealed class PerformanceCounterEntry
     public string GraphTitle { get; set; }
 
     [AllowNull]
-    public string GraphLabel { get; set; }
+    public string GraphVLabel { get; set; }
 
     [AllowNull]
     public string GraphArgs { get; set; }
 
-    public bool GraphScale { get; set; } = true;
+    public bool? GraphScale { get; set; }
 
-    // TODO
-    [AllowNull]
-    public string GraphDraw { get; set; }
+    public string? GraphDraw { get; set; }
 }
 
 public sealed class Settings

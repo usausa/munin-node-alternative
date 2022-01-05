@@ -52,7 +52,7 @@ public sealed class PluginManager
         for (var i = 0; i < values.Length; i++)
         {
             buffer.Add(values[i].Name);
-            buffer.AddSpace();
+            buffer.Add((byte)' ');
         }
         buffer.AddLineFeed();
     }

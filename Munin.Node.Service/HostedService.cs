@@ -6,8 +6,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-using static Munin.Node.Bytes;
-
 public sealed class HostedService : IHostedService, IDisposable
 {
     private const int ReadBufferSize = 256;
@@ -144,7 +142,7 @@ public sealed class HostedService : IHostedService, IDisposable
 
     private bool Process(BufferSegment request, BufferSegment response)
     {
-        var span = request.Buffer.AsSpan(0, request.Length).TrimEnd(LineFeed).TrimEnd(CarriageReturn);
+        var span = request.Buffer.AsSpan(0, request.Length).TrimEnd((byte)'\n').TrimEnd((byte)'\r');
         var index = span.IndexOf((byte)' ');
         var command = index >= 0 ? span[..index] : span;
 
@@ -215,7 +213,7 @@ public sealed class HostedService : IHostedService, IDisposable
                 return -1;
             }
 
-            var index = buffer.Buffer.AsSpan(buffer.Length).IndexOf(LineFeed);
+            var index = buffer.Buffer.AsSpan(buffer.Length).IndexOf((byte)'\n');
             buffer.Length += read;
 
             if (index >= 0)

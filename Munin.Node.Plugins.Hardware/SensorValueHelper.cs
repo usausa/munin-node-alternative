@@ -46,6 +46,7 @@ public static class SensorValueHelper
             {
                 HardwareType = hardware.HardwareType,
                 SensorType = sensor.SensorType,
+                Index = sensor.Index,
                 HardwareName = hardware.Name,
                 SensorName = sensor.Name,
                 Value = sensor.Value

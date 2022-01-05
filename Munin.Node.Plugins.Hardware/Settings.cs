@@ -1,7 +1,6 @@
 namespace Munin.Node.Plugins.Hardware;
 
 using System.Diagnostics.CodeAnalysis;
-using System.Text.Json.Serialization;
 
 using LibreHardwareMonitor.Hardware;
 
@@ -34,12 +33,14 @@ public sealed class SensorEntry
     public string GraphTitle { get; set; }
 
     [AllowNull]
-    public string GraphLabel { get; set; }
+    public string GraphVLabel { get; set; }
 
     [AllowNull]
     public string GraphArgs { get; set; }
 
-    public bool GraphScale { get; set; } = true;
+    public bool? GraphScale { get; set; }
+
+    public string? GraphDraw { get; set; }
 }
 
 public sealed class CustomEntry
@@ -48,17 +49,15 @@ public sealed class CustomEntry
 
     public bool Enable { get; set; }
 
-    [AllowNull]
-    public string GraphCategory { get; set; }
+    public string? GraphCategory { get; set; }
 
-    [AllowNull]
-    public string GraphTitle { get; set; }
+    public string? GraphTitle { get; set; }
 
-    [AllowNull]
-    public string GraphLabel { get; set; }
+    public string? GraphVLabel { get; set; }
 
-    [AllowNull]
-    public string GraphArgs { get; set; }
+    public string? GraphArgs { get; set; }
+
+    public bool? GraphScale { get; set; }
 }
 
 public sealed class Settings

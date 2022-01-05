@@ -38,7 +38,7 @@ builder.ConfigureServices((context, services) =>
         var pluginBuilder = new PluginBuilder();
         foreach (var module in settings.Modules)
         {
-            pluginBuilder.AddModule(Path.Combine(Directory.GetCurrentDirectory(), module));
+            pluginBuilder.AddModule(Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), module)));
         }
 
         pluginBuilder.Build(context.Configuration, services);

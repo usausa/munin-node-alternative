@@ -60,53 +60,78 @@ public sealed class PerformanceCounterPlugin : IPlugin, IDisposable
 
     public void BuildConfig(BufferSegment buffer)
     {
+        // graph_category
+        buffer.Add("graph_category ");
+        buffer.Add(entry.GraphCategory);
+        buffer.AddLineFeed();
         // graph_title
         buffer.Add("graph_title ");
         buffer.Add(entry.GraphTitle);
         buffer.AddLineFeed();
-        // graph_category
-        buffer.Add("graph_category ");
-        buffer.Add(entry.GraphCategory);
+        // graph_vlabel
+        buffer.Add("graph_vlabel ");
+        buffer.Add(entry.GraphVLabel);
         buffer.AddLineFeed();
         // graph_category
         buffer.Add("graph_args ");
         buffer.Add(entry.GraphArgs);
         buffer.AddLineFeed();
-        // graph_vlabel
-        // TODO
+        // graph_scale
+        if (entry.GraphScale.HasValue)
+        {
+            buffer.Add("graph_scale ");
+            buffer.Add(entry.GraphScale.Value ? "yes" : "no");
+            buffer.AddLineFeed();
+        }
 
-        // label
-        // TODO
-        buffer.Add(Name);
-        buffer.Add(".label ");
-        buffer.Add("TODO");
-        buffer.AddLineFeed();
-        // draw
-        // TODO
-        buffer.Add(Name);
-        buffer.Add(".draw ");
-        buffer.Add(entry.GraphDraw);
-        buffer.AddLineFeed();
-        // type
-        //buffer.Add(Name);
-        //buffer.Add(".type ");
-        //buffer.Add("TODO");
-        //buffer.AddLineFeed();
-        // info
-        //buffer.Add(Name);
-        //buffer.Add(".info ");
-        //buffer.Add("TODO");
-        //buffer.AddLineFeed();
+        for (var i = 0; i < counters.Length; i++)
+        {
+            var counter = counters[i];
+            // label
+            // TODO field
+            buffer.Add(Name);
+            buffer.Add(i);
+            buffer.Add(".label ");
+            // TODO name
+            if (String.IsNullOrEmpty(counter.InstanceName))
+            {
+                buffer.Add(i);
+            }
+            else
+            {
+                buffer.Add(counter.InstanceName);
+            }
+            // draw
+            if (!String.IsNullOrEmpty(entry.GraphDraw))
+            {
+                // TODO field
+                buffer.Add(Name);
+                buffer.Add(i);
+                buffer.Add(".draw ");
+                buffer.Add(entry.GraphDraw);    // TODO custom
+                buffer.AddLineFeed();
+            }
+            // TODO type
+            // TODO color
+            // TODO critical/warning
+        }
 
         buffer.AddEndLine();
     }
 
     public void BuildFetch(BufferSegment buffer)
     {
-        buffer.Add(Name);
-        buffer.Add(".value ");
-        buffer.Add(" 100");
-        buffer.AddLineFeed();
+        for (var i = 0; i < counters.Length; i++)
+        {
+            var counter = counters[i];
+            // value
+            // TODO field
+            buffer.Add(Name);
+            buffer.Add(i);
+            buffer.Add(".value ");
+            // TODO name
+            buffer.Add(counter.NextValue());
+        }
 
         buffer.AddEndLine();
     }

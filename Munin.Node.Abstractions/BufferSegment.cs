@@ -1,17 +1,28 @@
 namespace Munin.Node;
 
 using System.Buffers;
+using System.Buffers.Text;
+using System.Runtime.CompilerServices;
 using System.Text;
 
+// TODO Grow support ?
 public sealed class BufferSegment : IDisposable
 {
     public byte[] Buffer { get; }
 
     public int Length { get; set; }
 
-    public int Remaining => Buffer.Length - Length;
+    public int Remaining
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Buffer.Length - Length;
+    }
 
-    public bool IsEmpty => Length == 0;
+    public bool IsEmpty
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Length == 0;
+    }
 
     public BufferSegment(int bufferSize)
     {
@@ -19,6 +30,7 @@ public sealed class BufferSegment : IDisposable
         Length = 0;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Dispose()
     {
         ArrayPool<byte>.Shared.Return(Buffer);
@@ -26,12 +38,14 @@ public sealed class BufferSegment : IDisposable
 
     public void Clear() => Length = 0;
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Add(ReadOnlySpan<byte> values)
     {
         values.CopyTo(Buffer.AsSpan(Length));
         Length += values.Length;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Add(ReadOnlySpan<char> values)
     {
         var length = Encoding.ASCII.GetBytes(values, Buffer.AsSpan(Length));
@@ -41,19 +55,41 @@ public sealed class BufferSegment : IDisposable
         }
     }
 
-    public void AddSpace()
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Add(byte value)
     {
-        Buffer[Length++] = Bytes.Space;
+        Buffer[Length++] = value;
     }
 
-    public void AddLineFeed()
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Add(int value)
     {
-        Buffer[Length++] = Bytes.LineFeed;
+        if (Utf8Formatter.TryFormat(value, Buffer.AsSpan(Length), out var written))
+        {
+            Length += written;
+        }
     }
 
-    public void AddEndLine()
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Add(float value)
     {
-        Buffer[Length++] = Bytes.Dot;
-        Buffer[Length++] = Bytes.LineFeed;
+        if (Utf8Formatter.TryFormat(value, Buffer.AsSpan(Length), out var written))
+        {
+            Length += written;
+        }
+    }
+}
+
+public static class BufferSegmentExtensions
+{
+    public static void AddLineFeed(this BufferSegment buffer)
+    {
+        buffer.Add((byte)'\n');
+    }
+
+    public static void AddEndLine(this BufferSegment buffer)
+    {
+        buffer.Add((byte)'.');
+        buffer.Add((byte)'\n');
     }
 }

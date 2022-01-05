@@ -11,6 +11,8 @@ public struct SensorValue
 
     public SensorType SensorType { get; set; }
 
+    public int Index { get; set; }
+
     public string HardwareName { get; set; }
 
     public string SensorName { get; set; }
