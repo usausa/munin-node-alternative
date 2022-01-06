@@ -64,7 +64,7 @@ internal sealed class Settings
 {
     public SensorEntry[]? Sensor { get; set; }
 
-    public CustomEntry? MemoryLoad { get; set; }
+    public CustomEntry? Memory { get; set; }
 }
 
 internal static class SettingsExtensions

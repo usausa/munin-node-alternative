@@ -11,7 +11,7 @@ internal sealed class PluginInitializer : IPluginInitializer
     public void Setup(IConfiguration config, IServiceCollection services)
     {
         var settings = config.GetSection("Hardware").Get<Settings>();
-        if ((settings.Sensor?.Length == 0) && !settings.MemoryLoad.IsEnable())
+        if ((settings.Sensor?.Length == 0) && !settings.Memory.IsEnable())
         {
             return;
         }
@@ -21,7 +21,7 @@ internal sealed class PluginInitializer : IPluginInitializer
             IsMotherboardEnabled = settings.Sensor.IsHardwareEnable(HardwareType.SuperIO),
             IsCpuEnabled = settings.Sensor.IsHardwareEnable(HardwareType.Cpu),
             IsMemoryEnabled = settings.Sensor.IsHardwareEnable(HardwareType.Memory) ||
-                              settings.MemoryLoad.IsEnable(),
+                              settings.Memory.IsEnable(),
             IsGpuEnabled = settings.Sensor.IsHardwareEnable(HardwareType.GpuAmd) ||
                            settings.Sensor.IsHardwareEnable(HardwareType.GpuNvidia),
             IsStorageEnabled = settings.Sensor.IsHardwareEnable(HardwareType.Storage),
@@ -38,9 +38,9 @@ internal sealed class PluginInitializer : IPluginInitializer
             }
         }
 
-        if (settings.MemoryLoad.IsEnable())
+        if (settings.Memory.IsEnable())
         {
-            services.AddSingleton<IPlugin>(new MemoryPlugin(settings.MemoryLoad.Name ?? "memory"));
+            services.AddSingleton<IPlugin>(new MemoryPlugin(settings.Memory.Name ?? "memory"));
         }
     }
 }

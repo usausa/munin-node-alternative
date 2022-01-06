@@ -57,18 +57,20 @@ internal sealed class SensorPlugin : IPlugin
             .Select(x => x.Sensor.Hardware)
             .ToArray();
 
-        // TODO test
+        // Debug
+#if DEBUG
         Debug.WriteLine($"[{entry.Name}]");
         foreach (var hardware in uniqHardware)
         {
-            Debug.WriteLine($"Update: {hardware.Name}");
+            Debug.WriteLine($"Hardware: {hardware.Name}");
             hardware.Update();
         }
 
         foreach (var sensor in sensors)
         {
-            Debug.WriteLine($"Value: {sensor.Sensor.Hardware.Name}/{sensor.Sensor.Name} : {sensor.Sensor.Value}");
+            Debug.WriteLine($"Sensor: {sensor.Sensor.Hardware.Name}/{sensor.Sensor.Name} : {sensor.Sensor.Value}");
         }
+#endif
     }
 
     public IEnumerable<ISensor> Filter(IHardware hardware)

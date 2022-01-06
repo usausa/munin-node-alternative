@@ -70,6 +70,18 @@ internal sealed class PerformanceCounterPlugin : IPlugin, IDisposable
         {
             counter.Counter.NextValue();
         }
+
+        // Debug
+#if DEBUG
+        Debug.WriteLine($"[{entry.Name}]");
+        foreach (var item in list)
+        {
+            foreach (var counter in item.Counters)
+            {
+                Debug.WriteLine($"Counter: ({counter.CategoryName})({counter.CounterName})({counter.InstanceName})");
+            }
+        }
+#endif
     }
 
     public void Dispose()

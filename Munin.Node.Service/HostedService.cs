@@ -9,7 +9,9 @@ using System.Threading.Tasks;
 public sealed class HostedService : IHostedService, IDisposable
 {
     private const int ReadBufferSize = 256;
-    private const int WriteBufferSize = 4194304;
+    // TODO Grow
+    //private const int WriteBufferSize = 4194304;
+    private const int WriteBufferSize = 8192;
 
     private static readonly byte[] CommandNodes = Encoding.ASCII.GetBytes("nodes");
     private static readonly byte[] CommandList = Encoding.ASCII.GetBytes("list");
