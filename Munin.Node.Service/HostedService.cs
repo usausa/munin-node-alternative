@@ -61,7 +61,7 @@ public sealed class HostedService : IHostedService, IDisposable
             using var response = new BufferSegment(WriteBufferSize);
             try
             {
-                response.Add("# munin node at ");
+                response.Add("# munin node alternative .NET at ");
                 response.Add(Environment.MachineName);
                 response.AddLineFeed();
                 if (await WriteAsync(socket, response.Buffer, response.Length).ConfigureAwait(false) < 0)
