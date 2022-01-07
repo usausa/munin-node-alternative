@@ -8,6 +8,7 @@ munin-node build with .net.
 
 * label alias ? (Hardware/PerformanceCounter)
 * draw/type/color setting per field
+* graph_order ?
 
 ## 0.2
 
@@ -16,19 +17,14 @@ munin-node build with .net.
 
 ## 0.3
 
-* PerformanceCounter include/exclude/order support ?
-* graph_order ?
-
-## 0.4
-
 * warning/critical support ?
 * Value processing or cdef support ? (ex. 100 - x)
 
-## 0.5
+## 0.4
 
 * Standalone service ?
 
-## 0.6
+## 0.5
 
 * Redis plugin ?
 * Temper plugin ?
