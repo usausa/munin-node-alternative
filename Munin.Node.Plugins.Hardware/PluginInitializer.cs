@@ -40,7 +40,7 @@ internal sealed class PluginInitializer : IPluginInitializer
 
         if (settings.Memory.IsEnable())
         {
-            services.AddSingleton<IPlugin>(new MemoryPlugin(settings.Memory.Name ?? "memory"));
+            services.AddSingleton<IPlugin>(new MemoryPlugin(computer, settings.Memory));
         }
     }
 }

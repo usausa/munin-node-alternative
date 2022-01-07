@@ -1,7 +1,5 @@
 using Munin.Node.Service;
 
-#pragma warning disable CA1812
-
 var builder = Host.CreateDefaultBuilder(args);
 
 builder.UseWindowsService();

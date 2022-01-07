@@ -62,7 +62,7 @@ internal sealed class HostedService : IHostedService, IDisposable
                 response.Add("# munin node alternative .NET at ");
                 response.Add(Environment.MachineName);
                 response.AddLineFeed();
-                if (await WriteAsync(socket, response.GetSendMemory()).ConfigureAwait(false) < 0)
+                if (await WriteAsync(socket, response.AsSendMemory()).ConfigureAwait(false) < 0)
                 {
                     return;
                 }
@@ -71,7 +71,7 @@ internal sealed class HostedService : IHostedService, IDisposable
                 do
                 {
                     // Read line
-                    var read = await socket.ReceiveAsync(request.GetReceiveMemory(), SocketFlags.None).ConfigureAwait(false);
+                    var read = await socket.ReceiveAsync(request.AsReceiveMemory(), SocketFlags.None).ConfigureAwait(false);
                     if (read < 0)
                     {
                         break;
@@ -92,7 +92,7 @@ internal sealed class HostedService : IHostedService, IDisposable
                             response.AddEndLine();
                         }
 
-                        if (await WriteAsync(socket, response.GetSendMemory()).ConfigureAwait(false) < 0)
+                        if (await WriteAsync(socket, response.AsSendMemory()).ConfigureAwait(false) < 0)
                         {
                             process = false;
                             break;

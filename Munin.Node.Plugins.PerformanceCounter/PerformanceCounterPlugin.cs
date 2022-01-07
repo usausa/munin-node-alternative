@@ -65,7 +65,7 @@ internal sealed class PerformanceCounterPlugin : IPlugin, IDisposable
                 .ToArray();
         }
 
-        // Dummy
+        // Dummy call
         foreach (var counter in counters)
         {
             counter.Counter.NextValue();
@@ -73,13 +73,10 @@ internal sealed class PerformanceCounterPlugin : IPlugin, IDisposable
 
         // Debug
 #if DEBUG
-        Debug.WriteLine($"[{entry.Name}]");
-        foreach (var item in list)
+        System.Diagnostics.Debug.WriteLine($"[{entry.Name}]");
+        foreach (var counter in list.SelectMany(x => x.Counters))
         {
-            foreach (var counter in item.Counters)
-            {
-                Debug.WriteLine($"Counter: ({counter.CategoryName})({counter.CounterName})({counter.InstanceName})");
-            }
+            System.Diagnostics.Debug.WriteLine($"Counter: ({counter.CategoryName})({counter.CounterName})({counter.InstanceName})");
         }
 #endif
     }
@@ -107,7 +104,9 @@ internal sealed class PerformanceCounterPlugin : IPlugin, IDisposable
             }
             else
             {
-                foreach (var name in pcc.GetInstanceNames())
+                var names = pcc.GetInstanceNames();
+                Array.Sort(names);
+                foreach (var name in names)
                 {
                     yield return new PerformanceCounter(category, counter, name);
                 }

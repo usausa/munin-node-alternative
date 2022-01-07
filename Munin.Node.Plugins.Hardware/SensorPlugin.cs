@@ -1,6 +1,5 @@
 namespace Munin.Node.Plugins.Hardware;
 
-using System.Diagnostics;
 using System.Text;
 
 using LibreHardwareMonitor.Hardware;
@@ -36,17 +35,15 @@ internal sealed class SensorPlugin : IPlugin
         this.entry = entry;
         Name = Encoding.ASCII.GetBytes(entry.Name);
 
-        var target = computer.Hardware.SelectMany(Filter);
-        if (entry.Order is not null)
-        {
-            target = target.OrderBy(x => IsMatch(x, entry.Order));
-        }
-
         // TODO label
-        sensors = target
+        sensors = computer.Hardware
+            .SelectMany(Filter)
+            .OrderBy(x => entry.Order is null || IsMatch(x, entry.Order))
+            .ThenBy(x => x.Hardware.HardwareType)
+            .ThenBy(x => x.Hardware.Identifier.ToString())
             .Select(x => new SensorInfo
             {
-                Field = Encoding.ASCII.GetBytes(x.Identifier.ToString()[1..].Replace('/', '_')),
+                Field = Encoding.ASCII.GetBytes(MakeFieldName(x)),
                 Label = Encoding.ASCII.GetBytes(x.Name),
                 Sensor = x
             })
@@ -59,18 +56,31 @@ internal sealed class SensorPlugin : IPlugin
 
         // Debug
 #if DEBUG
-        Debug.WriteLine($"[{entry.Name}]");
+        System.Diagnostics.Debug.WriteLine($"[{entry.Name}]");
         foreach (var hardware in uniqHardware)
         {
-            Debug.WriteLine($"Hardware: {hardware.Name}");
+            System.Diagnostics.Debug.WriteLine($"Hardware: {hardware.Name}");
             hardware.Update();
         }
 
         foreach (var sensor in sensors)
         {
-            Debug.WriteLine($"Sensor: {sensor.Sensor.Hardware.Name}/{sensor.Sensor.Name} : {sensor.Sensor.Value}");
+            System.Diagnostics.Debug.WriteLine($"Sensor: {sensor.Sensor.Hardware.Name}/{sensor.Sensor.Name} : {sensor.Sensor.Value}");
         }
 #endif
+    }
+
+    private static string MakeFieldName(ISensor sensor)
+    {
+        if (sensor.Hardware.HardwareType == HardwareType.Network)
+        {
+            return sensor.Identifier.ToString()[1..].Replace('/', '_')
+                .Replace("-", string.Empty, StringComparison.Ordinal)
+                .Replace("{", string.Empty, StringComparison.Ordinal)
+                .Replace("}", string.Empty, StringComparison.Ordinal);
+        }
+
+        return sensor.Identifier.ToString()[1..].Replace('/', '_');
     }
 
     public IEnumerable<ISensor> Filter(IHardware hardware)

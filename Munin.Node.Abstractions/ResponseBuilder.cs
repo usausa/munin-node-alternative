@@ -35,7 +35,7 @@ public sealed class ResponseBuilder : IDisposable
     public void Clear() => length = 0;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ReadOnlyMemory<byte> GetSendMemory() => new(buffer, 0, length);
+    public ReadOnlyMemory<byte> AsSendMemory() => new(buffer, 0, length);
 
     private void Grow(int size)
     {
@@ -104,10 +104,10 @@ public sealed class ResponseBuilder : IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Add(float value)
     {
-        if (!Utf8Formatter.TryFormat(value, buffer.AsSpan(length), out var written))
+        if (!Utf8Formatter.TryFormat(value, buffer.AsSpan(length), out var written, new StandardFormat('F')))
         {
             Grow(written);
-            if (!Utf8Formatter.TryFormat(value, buffer.AsSpan(length), out written))
+            if (!Utf8Formatter.TryFormat(value, buffer.AsSpan(length), out written, new StandardFormat('F')))
             {
                 throw new InvalidOperationException();
             }

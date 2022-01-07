@@ -32,7 +32,7 @@ internal struct RequestBuffer : IDisposable
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Memory<byte> GetReceiveMemory() => buffer.AsMemory(length, buffer.Length - length);
+    public Memory<byte> AsReceiveMemory() => buffer.AsMemory(length, buffer.Length - length);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool TryGetLine(out Memory<byte> line)
