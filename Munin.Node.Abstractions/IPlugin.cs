@@ -4,7 +4,7 @@ public interface IPlugin
 {
     byte[] Name { get; }
 
-    void BuildConfig(BufferSegment buffer);
+    void BuildConfig(ResponseBuilder response);
 
-    void BuildFetch(BufferSegment buffer);
+    void BuildFetch(ResponseBuilder response);
 }

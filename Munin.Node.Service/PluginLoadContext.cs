@@ -4,7 +4,7 @@ using System;
 using System.Reflection;
 using System.Runtime.Loader;
 
-public sealed class PluginLoadContext : AssemblyLoadContext
+internal sealed class PluginLoadContext : AssemblyLoadContext
 {
     private readonly AssemblyDependencyResolver resolver;
 

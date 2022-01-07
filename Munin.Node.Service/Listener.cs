@@ -3,7 +3,7 @@ namespace Munin.Node.Service;
 using System.Net;
 using System.Net.Sockets;
 
-public sealed class Listener : IDisposable
+internal sealed class Listener : IDisposable
 {
     private readonly ILogger<Listener> logger;
 

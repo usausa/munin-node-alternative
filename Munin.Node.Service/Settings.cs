@@ -1,6 +1,6 @@
 namespace Munin.Node.Service;
 
-public sealed class Settings
+internal sealed class Settings
 {
     public int Port { get; set; }
 

@@ -3,7 +3,7 @@ namespace Munin.Node.Service;
 using System.Collections.Generic;
 using System.Linq;
 
-public sealed class PluginManager
+internal sealed class PluginManager
 {
     private readonly IPlugin[] plugins;
 
@@ -27,7 +27,7 @@ public sealed class PluginManager
         return null;
     }
 
-    public void BuildNames(BufferSegment buffer)
+    public void BuildNames(ResponseBuilder buffer)
     {
         var values = plugins;
         for (var i = 0; i < values.Length; i++)

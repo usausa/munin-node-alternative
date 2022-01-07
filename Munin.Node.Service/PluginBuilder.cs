@@ -2,7 +2,7 @@ namespace Munin.Node.Service;
 
 using System.Reflection;
 
-public sealed class PluginBuilder
+internal sealed class PluginBuilder
 {
     private readonly List<Assembly> modules = new();
 

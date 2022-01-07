@@ -11,12 +11,12 @@ internal sealed class MemoryPlugin : IPlugin
         Name = Encoding.ASCII.GetBytes(name);
     }
 
-    public void BuildConfig(BufferSegment buffer)
+    public void BuildConfig(ResponseBuilder response)
     {
         // TODO
     }
 
-    public void BuildFetch(BufferSegment buffer)
+    public void BuildFetch(ResponseBuilder response)
     {
         // TODO
     }

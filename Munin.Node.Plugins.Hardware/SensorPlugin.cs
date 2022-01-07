@@ -115,53 +115,53 @@ internal sealed class SensorPlugin : IPlugin
                                 (String.IsNullOrEmpty(x.Name) || (x.Name == sensor.Name)));
     }
 
-    public void BuildConfig(BufferSegment buffer)
+    public void BuildConfig(ResponseBuilder response)
     {
         // graph_category
-        buffer.Add("graph_category ");
-        buffer.Add(entry.GraphCategory);
-        buffer.AddLineFeed();
+        response.Add("graph_category ");
+        response.Add(entry.GraphCategory);
+        response.AddLineFeed();
         // graph_title
-        buffer.Add("graph_title ");
-        buffer.Add(entry.GraphTitle);
-        buffer.AddLineFeed();
+        response.Add("graph_title ");
+        response.Add(entry.GraphTitle);
+        response.AddLineFeed();
         // graph_vlabel
-        buffer.Add("graph_vlabel ");
-        buffer.Add(entry.GraphVLabel);
-        buffer.AddLineFeed();
+        response.Add("graph_vlabel ");
+        response.Add(entry.GraphVLabel);
+        response.AddLineFeed();
         // graph_category
-        buffer.Add("graph_args ");
-        buffer.Add(entry.GraphArgs);
-        buffer.AddLineFeed();
+        response.Add("graph_args ");
+        response.Add(entry.GraphArgs);
+        response.AddLineFeed();
         // graph_scale
         if (entry.GraphScale.HasValue)
         {
-            buffer.Add("graph_scale ");
-            buffer.Add(entry.GraphScale.Value ? "yes" : "no");
-            buffer.AddLineFeed();
+            response.Add("graph_scale ");
+            response.Add(entry.GraphScale.Value ? "yes" : "no");
+            response.AddLineFeed();
         }
 
         foreach (var sensor in sensors)
         {
             // label
-            buffer.Add(sensor.Field);
-            buffer.Add(".label ");
-            buffer.Add(sensor.Label);
-            buffer.AddLineFeed();
+            response.Add(sensor.Field);
+            response.Add(".label ");
+            response.Add(sensor.Label);
+            response.AddLineFeed();
             // draw
             if (!String.IsNullOrEmpty(entry.GraphDraw))
             {
-                buffer.Add(sensor.Field);
-                buffer.Add(".draw ");
-                buffer.Add(entry.GraphDraw);    // TODO custom
-                buffer.AddLineFeed();
+                response.Add(sensor.Field);
+                response.Add(".draw ");
+                response.Add(entry.GraphDraw);    // TODO custom
+                response.AddLineFeed();
             }
         }
 
-        buffer.AddEndLine();
+        response.AddEndLine();
     }
 
-    public void BuildFetch(BufferSegment buffer)
+    public void BuildFetch(ResponseBuilder response)
     {
         lock (computer)
         {
@@ -175,14 +175,14 @@ internal sealed class SensorPlugin : IPlugin
                 if (sensor.Sensor.Value.HasValue)
                 {
                     // value
-                    buffer.Add(sensor.Field);
-                    buffer.Add(".value ");
-                    buffer.Add(sensor.Sensor.Value.Value);
-                    buffer.AddLineFeed();
+                    response.Add(sensor.Field);
+                    response.Add(".value ");
+                    response.Add(sensor.Sensor.Value.Value);
+                    response.AddLineFeed();
                 }
             }
         }
 
-        buffer.AddEndLine();
+        response.AddEndLine();
     }
 }

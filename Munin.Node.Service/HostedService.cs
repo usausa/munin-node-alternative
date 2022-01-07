@@ -6,11 +6,9 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-public sealed class HostedService : IHostedService, IDisposable
+internal sealed class HostedService : IHostedService, IDisposable
 {
     private const int ReadBufferSize = 256;
-    // TODO Grow
-    //private const int WriteBufferSize = 4194304;
     private const int WriteBufferSize = 8192;
 
     private static readonly byte[] CommandNodes = Encoding.ASCII.GetBytes("nodes");
@@ -57,68 +55,64 @@ public sealed class HostedService : IHostedService, IDisposable
         _ = Task.Run(async () =>
         {
             using var socket = parameter;
-            using var request = new BufferSegment(ReadBufferSize);
-            using var response = new BufferSegment(WriteBufferSize);
+            using var request = new RequestBuffer(ReadBufferSize);
+            using var response = new ResponseBuilder(WriteBufferSize);
             try
             {
                 response.Add("# munin node alternative .NET at ");
                 response.Add(Environment.MachineName);
                 response.AddLineFeed();
-                if (await WriteAsync(socket, response.Buffer, response.Length).ConfigureAwait(false) < 0)
+                if (await WriteAsync(socket, response.GetSendMemory()).ConfigureAwait(false) < 0)
                 {
                     return;
                 }
 
+                var process = true;
                 do
                 {
                     // Read line
-                    var index = await ReadLineAsync(socket, request).ConfigureAwait(false);
-                    if (index < 0)
+                    var read = await socket.ReceiveAsync(request.GetReceiveMemory(), SocketFlags.None).ConfigureAwait(false);
+                    if (read < 0)
                     {
                         break;
                     }
 
-                    response.Clear();
-                    var result = Process(request, response);
+                    request.Advance(read);
 
-                    // Write response
-                    if (response.Length > 0)
+                    while (request.TryGetLine(out var line))
                     {
-                        if (await WriteAsync(socket, response.Buffer, response.Length).ConfigureAwait(false) < 0)
+                        response.Clear();
+                        var result = Process(line, response);
+
+                        // Write response
+                        if (response.IsEmpty)
                         {
+                            response.Add("# Unknown Error");
+                            response.AddLineFeed();
+                            response.AddEndLine();
+                        }
+
+                        if (await WriteAsync(socket, response.GetSendMemory()).ConfigureAwait(false) < 0)
+                        {
+                            process = false;
                             break;
                         }
-                    }
-                    else
-                    {
-                        response.Add("# Unknown Error");
-                        response.AddLineFeed();
-                        response.AddEndLine();
-                        if (await WriteAsync(socket, response.Buffer, response.Length).ConfigureAwait(false) < 0)
+
+                        if (!result)
                         {
+                            process = false;
                             break;
                         }
+
+                        request.Flip(line.Length);
                     }
 
-                    if (!result)
+                    if (!request.HasRemaining)
                     {
                         break;
-                    }
-
-                    // Flip
-                    var nextStart = index + 1;
-                    if (nextStart < request.Length)
-                    {
-                        var nextSize = request.Length - nextStart;
-                        request.Buffer.AsSpan(nextStart, nextSize).CopyTo(request.Buffer.AsSpan());
-                        request.Length = nextSize;
-                    }
-                    else
-                    {
-                        request.Clear();
                     }
                 }
-                while (true);
+                while (process);
             }
             catch (SocketException ex)
             {
@@ -134,9 +128,9 @@ public sealed class HostedService : IHostedService, IDisposable
         });
     }
 
-    private bool Process(BufferSegment request, BufferSegment response)
+    private bool Process(Memory<byte> line, ResponseBuilder response)
     {
-        var span = request.Buffer.AsSpan(0, request.Length).TrimEnd((byte)'\n').TrimEnd((byte)'\r');
+        var span = line.TrimEnd((byte)'\n').TrimEnd((byte)'\r').Span;
         var index = span.IndexOf((byte)' ');
         var command = index >= 0 ? span[..index] : span;
 
@@ -197,38 +191,12 @@ public sealed class HostedService : IHostedService, IDisposable
         return true;
     }
 
-    private static async ValueTask<int> ReadLineAsync(Socket socket, BufferSegment buffer)
-    {
-        do
-        {
-            var read = await socket.ReceiveAsync(new ArraySegment<byte>(buffer.Buffer, buffer.Length, buffer.Remaining), SocketFlags.None).ConfigureAwait(false);
-            if (read <= 0)
-            {
-                return -1;
-            }
-
-            var index = buffer.Buffer.AsSpan(buffer.Length).IndexOf((byte)'\n');
-            buffer.Length += read;
-
-            if (index >= 0)
-            {
-                return index;
-            }
-
-            if (buffer.Remaining == 0)
-            {
-                return -1;
-            }
-        }
-        while (true);
-    }
-
-    private static async ValueTask<int> WriteAsync(Socket socket, byte[] buffer, int length)
+    private static async ValueTask<int> WriteAsync(Socket socket, ReadOnlyMemory<byte> buffer)
     {
         var offset = 0;
         do
         {
-            var write = await socket.SendAsync(new ArraySegment<byte>(buffer, offset, length - offset), SocketFlags.None).ConfigureAwait(false);
+            var write = await socket.SendAsync(buffer[offset..], SocketFlags.None).ConfigureAwait(false);
             if (write <= 0)
             {
                 return -1;
@@ -236,7 +204,7 @@ public sealed class HostedService : IHostedService, IDisposable
 
             offset += write;
         }
-        while (offset < length);
+        while (offset < buffer.Length);
 
         return offset;
     }

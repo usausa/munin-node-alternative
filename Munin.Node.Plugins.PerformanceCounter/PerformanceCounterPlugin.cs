@@ -115,65 +115,65 @@ internal sealed class PerformanceCounterPlugin : IPlugin, IDisposable
         }
     }
 
-    public void BuildConfig(BufferSegment buffer)
+    public void BuildConfig(ResponseBuilder response)
     {
         // graph_category
-        buffer.Add("graph_category ");
-        buffer.Add(entry.GraphCategory);
-        buffer.AddLineFeed();
+        response.Add("graph_category ");
+        response.Add(entry.GraphCategory);
+        response.AddLineFeed();
         // graph_title
-        buffer.Add("graph_title ");
-        buffer.Add(entry.GraphTitle);
-        buffer.AddLineFeed();
+        response.Add("graph_title ");
+        response.Add(entry.GraphTitle);
+        response.AddLineFeed();
         // graph_vlabel
-        buffer.Add("graph_vlabel ");
-        buffer.Add(entry.GraphVLabel);
-        buffer.AddLineFeed();
+        response.Add("graph_vlabel ");
+        response.Add(entry.GraphVLabel);
+        response.AddLineFeed();
         // graph_category
-        buffer.Add("graph_args ");
-        buffer.Add(entry.GraphArgs);
-        buffer.AddLineFeed();
+        response.Add("graph_args ");
+        response.Add(entry.GraphArgs);
+        response.AddLineFeed();
         // graph_scale
         if (entry.GraphScale.HasValue)
         {
-            buffer.Add("graph_scale ");
-            buffer.Add(entry.GraphScale.Value ? "yes" : "no");
-            buffer.AddLineFeed();
+            response.Add("graph_scale ");
+            response.Add(entry.GraphScale.Value ? "yes" : "no");
+            response.AddLineFeed();
         }
 
         foreach (var counter in counters)
         {
             // label
-            buffer.Add(counter.Field);
-            buffer.Add(".label ");
-            buffer.Add(counter.Label);
-            buffer.AddLineFeed();
+            response.Add(counter.Field);
+            response.Add(".label ");
+            response.Add(counter.Label);
+            response.AddLineFeed();
             // draw
             if (!String.IsNullOrEmpty(entry.GraphDraw))
             {
-                buffer.Add(counter.Field);
-                buffer.Add(".draw ");
-                buffer.Add(entry.GraphDraw);    // TODO custom
-                buffer.AddLineFeed();
+                response.Add(counter.Field);
+                response.Add(".draw ");
+                response.Add(entry.GraphDraw);    // TODO custom
+                response.AddLineFeed();
             }
         }
 
-        buffer.AddEndLine();
+        response.AddEndLine();
     }
 
-    public void BuildFetch(BufferSegment buffer)
+    public void BuildFetch(ResponseBuilder response)
     {
         foreach (var counter in counters)
         {
             // value
-            buffer.Add(counter.Field);
-            buffer.Add(".value ");
-            buffer.Add(counter.Multiply.HasValue
+            response.Add(counter.Field);
+            response.Add(".value ");
+            response.Add(counter.Multiply.HasValue
                 ? counter.Counter.NextValue() * counter.Multiply.Value
                 : counter.Counter.NextValue());
-            buffer.AddLineFeed();
+            response.AddLineFeed();
         }
 
-        buffer.AddEndLine();
+        response.AddEndLine();
     }
 }
