@@ -23,7 +23,7 @@ internal sealed class SensorPlugin : IPlugin
 
     private readonly Computer computer;
 
-    private readonly IHardware[] uniqHardware;
+    private readonly IHardware[] updateHardware;
 
     private readonly SensorInfo[] sensors;
 
@@ -35,29 +35,39 @@ internal sealed class SensorPlugin : IPlugin
         this.entry = entry;
         Name = Encoding.ASCII.GetBytes(entry.Name);
 
-        // TODO label
-        sensors = computer.Hardware
+        var target = computer.Hardware
             .SelectMany(Filter)
             .OrderBy(x => entry.Order is null || IsMatch(x, entry.Order))
             .ThenBy(x => x.Hardware.HardwareType)
             .ThenBy(x => x.Hardware.Identifier.ToString())
+            .ToList();
+        var grouping = target
+            .GroupBy(x => x.Hardware.Identifier)
+            .ToDictionary(x => x.Key.ToString(), x => new
+            {
+                x.First().Hardware,
+                SensorCount = x.Count()
+            });
+
+        updateHardware = grouping
+            .Select(x => x.Value.Hardware)
+            .ToArray();
+
+        var singleHardware = grouping.Count == 1;
+        var singleSensor = grouping.All(x => x.Value.SensorCount == 1);
+        sensors = target
             .Select(x => new SensorInfo
             {
                 Field = Encoding.ASCII.GetBytes(MakeFieldName(x)),
-                Label = Encoding.ASCII.GetBytes(x.Name),
+                Label = Encoding.ASCII.GetBytes(MakeLabelName(x, singleHardware, singleSensor)),
                 Sensor = x
             })
-            .ToArray();
-        var set = new HashSet<string>();
-        uniqHardware = sensors
-            .Where(x => set.Add(x.Sensor.Hardware.Identifier.ToString()))
-            .Select(x => x.Sensor.Hardware)
             .ToArray();
 
         // Debug
 #if DEBUG
         System.Diagnostics.Debug.WriteLine($"[{entry.Name}]");
-        foreach (var hardware in uniqHardware)
+        foreach (var hardware in updateHardware)
         {
             System.Diagnostics.Debug.WriteLine($"Hardware: {hardware.Name}");
             hardware.Update();
@@ -81,6 +91,21 @@ internal sealed class SensorPlugin : IPlugin
         }
 
         return sensor.Identifier.ToString()[1..].Replace('/', '_');
+    }
+
+    private static string MakeLabelName(ISensor sensor, bool singleHardware, bool singleSensor)
+    {
+        if (singleHardware)
+        {
+            return sensor.Name;
+        }
+
+        if (singleSensor)
+        {
+            return sensor.Hardware.Name;
+        }
+
+        return $"{sensor.Hardware.Name} {sensor.Name}";
     }
 
     public IEnumerable<ISensor> Filter(IHardware hardware)
@@ -153,6 +178,7 @@ internal sealed class SensorPlugin : IPlugin
 
         foreach (var sensor in sensors)
         {
+            // TODO custom per field: draw, type, color
             // label
             response.Add(sensor.Field);
             response.Add(".label ");
@@ -163,7 +189,7 @@ internal sealed class SensorPlugin : IPlugin
             {
                 response.Add(sensor.Field);
                 response.Add(".draw ");
-                response.Add(entry.GraphDraw);    // TODO custom
+                response.Add(entry.GraphDraw);
                 response.AddLineFeed();
             }
         }
@@ -175,7 +201,7 @@ internal sealed class SensorPlugin : IPlugin
     {
         lock (computer)
         {
-            foreach (var hardware in uniqHardware)
+            foreach (var hardware in updateHardware)
             {
                 hardware.Update();
             }

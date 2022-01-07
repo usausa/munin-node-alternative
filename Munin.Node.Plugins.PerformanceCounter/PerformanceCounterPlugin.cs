@@ -142,6 +142,7 @@ internal sealed class PerformanceCounterPlugin : IPlugin, IDisposable
 
         foreach (var counter in counters)
         {
+            // TODO custom per field: draw, type, color
             // label
             response.Add(counter.Field);
             response.Add(".label ");
@@ -152,7 +153,7 @@ internal sealed class PerformanceCounterPlugin : IPlugin, IDisposable
             {
                 response.Add(counter.Field);
                 response.Add(".draw ");
-                response.Add(entry.GraphDraw);    // TODO custom
+                response.Add(entry.GraphDraw);
                 response.AddLineFeed();
             }
         }
