@@ -59,7 +59,7 @@ internal sealed class SensorPlugin : IPlugin
             .Select(x => new SensorInfo
             {
                 Field = Encoding.ASCII.GetBytes(MakeFieldName(x)),
-                Label = Encoding.ASCII.GetBytes(MakeLabelName(x, singleHardware, singleSensor)),
+                Label = Encoding.ASCII.GetBytes(MakeLabelName(singleHardware, singleSensor, x)),
                 Sensor = x
             })
             .ToArray();
@@ -93,7 +93,7 @@ internal sealed class SensorPlugin : IPlugin
         return sensor.Identifier.ToString()[1..].Replace('/', '_');
     }
 
-    private static string MakeLabelName(ISensor sensor, bool singleHardware, bool singleSensor)
+    private static string MakeLabelName(bool singleHardware, bool singleSensor, ISensor sensor)
     {
         if (singleHardware)
         {

@@ -104,10 +104,10 @@ public sealed class ResponseBuilder : IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Add(float value)
     {
-        if (!Utf8Formatter.TryFormat(value, buffer.AsSpan(length), out var written, new StandardFormat('F')))
+        if (!Utf8Formatter.TryFormat(value, buffer.AsSpan(length), out var written))
         {
             Grow(written);
-            if (!Utf8Formatter.TryFormat(value, buffer.AsSpan(length), out written, new StandardFormat('F')))
+            if (!Utf8Formatter.TryFormat(value, buffer.AsSpan(length), out written))
             {
                 throw new InvalidOperationException();
             }

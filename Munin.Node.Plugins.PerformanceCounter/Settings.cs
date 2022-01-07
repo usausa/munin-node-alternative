@@ -13,6 +13,7 @@ internal sealed class ObjectEntry
     public string? Instance { get; set; }
 
     public float? Multiply { get; set; }
+    public string? Label { get; set; }
 }
 
 internal sealed class PerformanceCounterEntry

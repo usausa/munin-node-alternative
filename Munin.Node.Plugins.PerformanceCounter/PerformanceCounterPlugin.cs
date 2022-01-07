@@ -36,34 +36,18 @@ internal sealed class PerformanceCounterPlugin : IPlugin, IDisposable
         var list = entry.Object
             .Select(x => new { Object = x, Counters = Create(x.Category, x.Counter, x.Instance).ToList() })
             .ToList();
-        var isSingle = list.All(x => x.Counters.Count == 1);
-        if (list.Count == 1)
-        {
-            // TODO label
-            counters = list[0].Counters
-                .Select((x, i) => new CounterInfo
+        var singleCounter = list.Count == 1;
+        var singleInstance = list.All(x => x.Counters.Count == 1);
+        counters = list
+            .SelectMany((x, i) => x.Counters
+                .Select((y, j) => new CounterInfo
                 {
-                    Field = isSingle ? Name : Encoding.ASCII.GetBytes($"{entry.Name}_{i}"),
-                    Label = Encoding.ASCII.GetBytes(String.IsNullOrEmpty(x.InstanceName) ? $"{i}" : x.InstanceName),
-                    Counter = x,
-                    Multiply = list[0].Object.Multiply
-                })
-                .ToArray();
-        }
-        else
-        {
-            // TODO label
-            counters = list
-                .SelectMany((x, i) => x.Counters
-                    .Select((y, j) => new CounterInfo
-                    {
-                        Field = Encoding.ASCII.GetBytes(isSingle ? $"{entry.Name}_{i}" : $"{entry.Name}_{i}_{j}"),
-                        Label = Encoding.ASCII.GetBytes(String.IsNullOrEmpty(y.InstanceName) ? (isSingle ? $"{i}" : $"{i}_{j}") : y.InstanceName),
-                        Counter = y,
-                        Multiply = x.Object.Multiply
-                    }))
-                .ToArray();
-        }
+                    Field = Encoding.ASCII.GetBytes(MakeFieldName(singleCounter, singleInstance, i, j, entry.Name)),
+                    Label = Encoding.ASCII.GetBytes(MakeLabelName(x.Counters.Count == 1, j, y, x.Object)),
+                    Counter = y,
+                    Multiply = x.Object.Multiply
+                }))
+            .ToArray();
 
         // Dummy call
         foreach (var counter in counters)
@@ -79,6 +63,26 @@ internal sealed class PerformanceCounterPlugin : IPlugin, IDisposable
             System.Diagnostics.Debug.WriteLine($"Counter: ({counter.CategoryName})({counter.CounterName})({counter.InstanceName})");
         }
 #endif
+    }
+
+    private static string MakeFieldName(bool singleCounter, bool singleInstance, int counterIndex, int instanceIndex, string name)
+    {
+        if (singleCounter)
+        {
+            return singleInstance ? name : $"{name}_{instanceIndex}";
+        }
+
+        return singleInstance ? $"{name}_{counterIndex}" : $"{name}_{counterIndex}_{instanceIndex}";
+    }
+
+    private static string MakeLabelName(bool singleInstance, int instanceIndex, PerformanceCounter counter, ObjectEntry entry)
+    {
+        if (String.IsNullOrEmpty(entry.Label))
+        {
+            return String.IsNullOrEmpty(counter.InstanceName) ? counter.CounterName : counter.InstanceName;
+        }
+
+        return singleInstance ? entry.Label : $"{entry.Label} {instanceIndex}";
     }
 
     public void Dispose()
