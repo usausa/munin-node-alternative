@@ -59,7 +59,7 @@ internal sealed class HostedService : IHostedService, IDisposable
             using var response = new ResponseBuilder(WriteBufferSize);
             try
             {
-                response.Add("# munin node alternative .NET at ");
+                response.Add("# munin node at ");
                 response.Add(Environment.MachineName);
                 response.AddLineFeed();
                 if (await WriteAsync(socket, response.AsSendMemory()).ConfigureAwait(false) < 0)

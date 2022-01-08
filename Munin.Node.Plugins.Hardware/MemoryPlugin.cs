@@ -75,7 +75,7 @@ internal sealed class MemoryPlugin : IPlugin
         response.AddLineFeed();
         // graph_category
         response.Add("graph_args ");
-        response.Add(entry.GraphArgs ?? "graph_args -b 1024 -l 0");
+        response.Add(entry.GraphArgs ?? "-b 1024 -l 0");
         response.AddLineFeed();
         // graph_order
         response.Add("graph_order apps free swap");
