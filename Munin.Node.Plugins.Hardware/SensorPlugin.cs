@@ -213,7 +213,9 @@ internal sealed class SensorPlugin : IPlugin
                     // value
                     response.Add(sensor.Field);
                     response.Add(".value ");
-                    response.Add(sensor.Sensor.Value.Value);
+                    response.Add(entry.Multiply.HasValue
+                        ? sensor.Sensor.Value.Value * entry.Multiply.Value
+                        : sensor.Sensor.Value.Value);
                     response.AddLineFeed();
                 }
             }

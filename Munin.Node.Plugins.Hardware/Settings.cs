@@ -41,6 +41,8 @@ internal sealed class SensorEntry
     public bool? GraphScale { get; set; }
 
     public string? GraphDraw { get; set; }
+
+    public float? Multiply { get; set; }
 }
 
 internal sealed class CustomEntry
