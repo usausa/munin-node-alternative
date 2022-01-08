@@ -12,20 +12,16 @@ munin-node build with .net.
 
 ## 0.3
 
-* Add SQL Server counter
-* Add IIS counter
-
-## 0.4
-
 * warning/critical support ?
 * Value processing or cdef support ? (ex. 100 - x)
 
-## 0.5
+## 0.4
 
 * Standalone service ?
 
-## 0.6
+## 0.5
 
 * Redis plugin ?
 * Temper plugin ?
 * dotnet plugin ?
+* Dynamic performance counter ?
