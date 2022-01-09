@@ -4,8 +4,14 @@ munin-node build with .net.
 
 ## Milestone
 
+## 0.1
+
+* Fix update for shared sensor or create basic plugin (for network load)
+* 2JCIE-BU plugin
+
 ## 0.2
 
+* Dynamic performance counter ?
 * label alias ? (Hardware/PerformanceCounter)
 * draw/type/color setting per field
 * graph_order ?
@@ -24,4 +30,3 @@ munin-node build with .net.
 * Redis plugin ?
 * Temper plugin ?
 * dotnet plugin ?
-* Dynamic performance counter ?

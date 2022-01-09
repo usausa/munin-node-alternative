@@ -26,8 +26,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Munin.Node.Service", "Munin.Node.Service\Munin.Node.Service.csproj", "{626AE034-7B97-4410-A9BA-347D387F232F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B9C21A3B-D6D0-453B-B301-34CC982B6CBF} = {B9C21A3B-D6D0-453B-B301-34CC982B6CBF}
+		{7487425B-BABC-4066-AA26-1BF67EDF39A1} = {7487425B-BABC-4066-AA26-1BF67EDF39A1}
 		{2983CBFF-568D-4BDA-A80D-AEF949BF8280} = {2983CBFF-568D-4BDA-A80D-AEF949BF8280}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Munin.Node.Plugins.SensorOmron", "Munin.Node.Plugins.SensorOmron\Munin.Node.Plugins.SensorOmron.csproj", "{7487425B-BABC-4066-AA26-1BF67EDF39A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +54,10 @@ Global
 		{626AE034-7B97-4410-A9BA-347D387F232F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{626AE034-7B97-4410-A9BA-347D387F232F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{626AE034-7B97-4410-A9BA-347D387F232F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7487425B-BABC-4066-AA26-1BF67EDF39A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7487425B-BABC-4066-AA26-1BF67EDF39A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7487425B-BABC-4066-AA26-1BF67EDF39A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7487425B-BABC-4066-AA26-1BF67EDF39A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
