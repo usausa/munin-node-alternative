@@ -81,9 +81,9 @@ internal sealed class MemoryPlugin : IPlugin
         response.Add("graph_order apps free swap");
         response.AddLineFeed();
 
-        response.Add("app.label apps");
+        response.Add("apps.label apps");
         response.AddLineFeed();
-        response.Add("app.draw AREA");
+        response.Add("apps.draw AREA");
         response.AddLineFeed();
         response.Add("free.label free");
         response.AddLineFeed();
@@ -103,7 +103,7 @@ internal sealed class MemoryPlugin : IPlugin
         {
             memory.Update();
 
-            response.Add("app.value ");
+            response.Add("apps.value ");
             response.Add(physicalMemoryUsed.Value!.Value);
             response.AddLineFeed();
             response.Add("free.value ");

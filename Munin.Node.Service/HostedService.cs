@@ -113,6 +113,9 @@ internal sealed class HostedService : IHostedService, IDisposable
                     }
                 }
                 while (process);
+
+                // hack
+                GC.Collect();
             }
             catch (SocketException ex)
             {
