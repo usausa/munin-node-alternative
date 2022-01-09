@@ -192,6 +192,14 @@ internal sealed class SensorPlugin : IPlugin
                 response.Add(entry.GraphDraw);
                 response.AddLineFeed();
             }
+            // type
+            if (!String.IsNullOrEmpty(entry.GraphType))
+            {
+                response.Add(sensor.Field);
+                response.Add(".type ");
+                response.Add(entry.GraphType);
+                response.AddLineFeed();
+            }
         }
 
         response.AddEndLine();
@@ -213,9 +221,18 @@ internal sealed class SensorPlugin : IPlugin
                     // value
                     response.Add(sensor.Field);
                     response.Add(".value ");
-                    response.Add(entry.Multiply.HasValue
-                        ? sensor.Sensor.Value.Value * entry.Multiply.Value
-                        : sensor.Sensor.Value.Value);
+                    if (entry.GraphType is "DERIVE" or "COUNTER")
+                    {
+                        response.Add((int)(entry.Multiply.HasValue
+                            ? sensor.Sensor.Value.Value * entry.Multiply.Value
+                            : sensor.Sensor.Value.Value));
+                    }
+                    else
+                    {
+                        response.Add(entry.Multiply.HasValue
+                            ? sensor.Sensor.Value.Value * entry.Multiply.Value
+                            : sensor.Sensor.Value.Value);
+                    }
                     response.AddLineFeed();
                 }
             }

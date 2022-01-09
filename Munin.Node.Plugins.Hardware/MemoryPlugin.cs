@@ -67,7 +67,7 @@ internal sealed class MemoryPlugin : IPlugin
         response.AddLineFeed();
         // graph_title
         response.Add("graph_title ");
-        response.Add(entry.GraphTitle ?? "Memory data");
+        response.Add(entry.GraphTitle ?? "Memory");
         response.AddLineFeed();
         // graph_vlabel
         response.Add("graph_vlabel ");

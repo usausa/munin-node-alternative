@@ -160,6 +160,14 @@ internal sealed class PerformanceCounterPlugin : IPlugin, IDisposable
                 response.Add(entry.GraphDraw);
                 response.AddLineFeed();
             }
+            // type
+            if (!String.IsNullOrEmpty(entry.GraphType))
+            {
+                response.Add(counter.Field);
+                response.Add(".type ");
+                response.Add(entry.GraphType);
+                response.AddLineFeed();
+            }
         }
 
         response.AddEndLine();
@@ -172,9 +180,18 @@ internal sealed class PerformanceCounterPlugin : IPlugin, IDisposable
             // value
             response.Add(counter.Field);
             response.Add(".value ");
-            response.Add(counter.Multiply.HasValue
-                ? counter.Counter.NextValue() * counter.Multiply.Value
-                : counter.Counter.NextValue());
+            if (entry.GraphType is "DERIVE" or "COUNTER")
+            {
+                response.Add((int)(counter.Multiply.HasValue
+                    ? counter.Counter.NextValue() * counter.Multiply.Value
+                    : counter.Counter.NextValue()));
+            }
+            else
+            {
+                response.Add(counter.Multiply.HasValue
+                    ? counter.Counter.NextValue() * counter.Multiply.Value
+                    : counter.Counter.NextValue());
+            }
             response.AddLineFeed();
         }
 

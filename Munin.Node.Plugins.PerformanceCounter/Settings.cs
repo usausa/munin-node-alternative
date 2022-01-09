@@ -40,6 +40,8 @@ internal sealed class PerformanceCounterEntry
     public bool? GraphScale { get; set; }
 
     public string? GraphDraw { get; set; }
+
+    public string? GraphType { get; set; }
 }
 
 internal sealed class Settings

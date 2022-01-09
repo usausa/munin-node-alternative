@@ -9,7 +9,6 @@ munin-node build with .net.
 * label alias ? (Hardware/PerformanceCounter)
 * draw/type/color setting per field
 * graph_order ?
-* Review category
 
 ## 0.3
 
