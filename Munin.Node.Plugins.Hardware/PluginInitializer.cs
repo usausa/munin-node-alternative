@@ -28,19 +28,19 @@ internal sealed class PluginInitializer : IPluginInitializer
             IsNetworkEnabled = settings.Sensor.IsHardwareEnable(HardwareType.Network)
         };
         computer.Open();
-        HardwareHelper.Update(computer);
+        var repository = new SensorRepository(computer, settings.Expire * 10000L);
 
         if (settings.Sensor?.Length > 0)
         {
             foreach (var entry in settings.Sensor)
             {
-                services.AddSingleton<IPlugin>(new SensorPlugin(computer, entry));
+                services.AddSingleton<IPlugin>(new SensorPlugin(repository, entry));
             }
         }
 
         if (settings.Memory.IsEnable())
         {
-            services.AddSingleton<IPlugin>(new MemoryPlugin(computer, settings.Memory));
+            services.AddSingleton<IPlugin>(new MemoryPlugin(repository, settings.Memory));
         }
     }
 }

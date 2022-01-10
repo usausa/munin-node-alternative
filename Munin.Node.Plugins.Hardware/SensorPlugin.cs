@@ -21,22 +21,20 @@ internal sealed class SensorPlugin : IPlugin
 
     private readonly SensorEntry entry;
 
-    private readonly Computer computer;
-
-    private readonly IHardware[] updateHardware;
+    private readonly SensorRepository repository;
 
     private readonly SensorInfo[] sensors;
 
     public byte[] Name { get; }
 
-    public SensorPlugin(Computer computer, SensorEntry entry)
+    public SensorPlugin(SensorRepository repository, SensorEntry entry)
     {
-        this.computer = computer;
+        this.repository = repository;
         this.entry = entry;
         Name = Encoding.ASCII.GetBytes(entry.Name);
 
-        var target = computer.Hardware
-            .SelectMany(Filter)
+        var target = repository.EnumerableSensor()
+            .Where(Filter)
             .OrderBy(x => entry.Order is null || IsMatch(x, entry.Order))
             .ThenBy(x => x.Hardware.HardwareType)
             .ThenBy(x => x.Hardware.Identifier.ToString())
@@ -48,10 +46,6 @@ internal sealed class SensorPlugin : IPlugin
                 x.First().Hardware,
                 SensorCount = x.Count()
             });
-
-        updateHardware = grouping
-            .Select(x => x.Value.Hardware)
-            .ToArray();
 
         var singleHardware = grouping.Count == 1;
         var singleSensor = grouping.All(x => x.Value.SensorCount == 1);
@@ -67,12 +61,6 @@ internal sealed class SensorPlugin : IPlugin
         // Debug
 #if DEBUG
         System.Diagnostics.Debug.WriteLine($"[{entry.Name}]");
-        foreach (var hardware in updateHardware)
-        {
-            System.Diagnostics.Debug.WriteLine($"Hardware: {hardware.Name}");
-            hardware.Update();
-        }
-
         foreach (var sensor in sensors)
         {
             System.Diagnostics.Debug.WriteLine($"Sensor: {sensor.Sensor.Hardware.Name}/{sensor.Sensor.Name} : {sensor.Sensor.Value}");
@@ -108,43 +96,32 @@ internal sealed class SensorPlugin : IPlugin
         return $"{sensor.Hardware.Name} {sensor.Name}";
     }
 
-    public IEnumerable<ISensor> Filter(IHardware hardware)
+    private bool Filter(ISensor sensor)
     {
-        foreach (var subHardware in hardware.SubHardware)
+        if (sensor.SensorType != entry.Sensor)
         {
-            foreach (var sensor in Filter(subHardware))
-            {
-                yield return sensor;
-            }
+            return false;
         }
 
-        foreach (var sensor in hardware.Sensors)
+        if ((entry.Hardware?.Length > 0) && (Array.IndexOf(entry.Hardware, sensor.Hardware.HardwareType) < 0))
         {
-            if (sensor.SensorType != entry.Sensor)
-            {
-                continue;
-            }
-
-            if ((entry.Hardware?.Length > 0) && (Array.IndexOf(entry.Hardware, sensor.Hardware.HardwareType) < 0))
-            {
-                continue;
-            }
-
-            if ((entry.Include?.Length > 0) && !IsMatch(sensor, entry.Include))
-            {
-                continue;
-            }
-
-            if ((entry.Exclude?.Length > 0) && IsMatch(sensor, entry.Exclude))
-            {
-                continue;
-            }
-
-            yield return sensor;
+            return false;
         }
+
+        if ((entry.Include?.Length > 0) && !IsMatch(sensor, entry.Include))
+        {
+            return false;
+        }
+
+        if ((entry.Exclude?.Length > 0) && IsMatch(sensor, entry.Exclude))
+        {
+            return false;
+        }
+
+        return true;
     }
 
-    public static bool IsMatch(ISensor sensor, FilterEntry[] filters)
+    private static bool IsMatch(ISensor sensor, IEnumerable<FilterEntry> filters)
     {
         return filters.Any(x => (!x.Type.HasValue || (x.Type == sensor.Hardware.HardwareType)) &&
                                 (String.IsNullOrEmpty(x.Name) || (x.Name == sensor.Name)));
@@ -207,12 +184,9 @@ internal sealed class SensorPlugin : IPlugin
 
     public void BuildFetch(ResponseBuilder response)
     {
-        lock (computer)
+        lock (repository.Sync)
         {
-            foreach (var hardware in updateHardware)
-            {
-                hardware.Update();
-            }
+            repository.Update();
 
             foreach (var sensor in sensors)
             {

@@ -10,23 +10,20 @@ internal sealed class MemoryPlugin : IPlugin
 
     private readonly CustomEntry entry;
 
-    private readonly Computer computer;
-
-    private readonly IHardware memory;
+    private readonly SensorRepository repository;
 
     private readonly ISensor physicalMemoryUsed;
     private readonly ISensor physicalMemoryAvailable;
     private readonly ISensor virtualMemoryUsed;
 
-    public MemoryPlugin(Computer computer, CustomEntry entry)
+    public MemoryPlugin(SensorRepository repository, CustomEntry entry)
     {
-        this.computer = computer;
+        this.repository = repository;
         this.entry = entry;
         var name = entry.Name ?? "memory";
         Name = Encoding.ASCII.GetBytes(name);
 
-        memory = HardwareHelper.EnumerableHardware(computer).First(x => x.HardwareType == HardwareType.Memory);
-        foreach (var sensor in memory.Sensors.Where(x => x.SensorType == SensorType.Data))
+        foreach (var sensor in repository.EnumerableSensor().Where(x => (x.Hardware.HardwareType == HardwareType.Memory) && (x.SensorType == SensorType.Data)))
         {
             switch (sensor.Name)
             {
@@ -44,15 +41,12 @@ internal sealed class MemoryPlugin : IPlugin
 
         if ((physicalMemoryUsed is null) || (physicalMemoryAvailable is null) || (virtualMemoryUsed is null))
         {
-            throw new ArgumentException("Sensor not found.", nameof(computer));
+            throw new InvalidOperationException("Sensor not found.");
         }
 
         // Debug
 #if DEBUG
         System.Diagnostics.Debug.WriteLine($"[{name}]");
-        System.Diagnostics.Debug.WriteLine($"Hardware: {memory.Name}");
-        memory.Update();
-
         System.Diagnostics.Debug.WriteLine($"Sensor: {physicalMemoryUsed.Name} : {physicalMemoryUsed.Value}");
         System.Diagnostics.Debug.WriteLine($"Sensor: {physicalMemoryAvailable.Name} : {physicalMemoryAvailable.Value}");
         System.Diagnostics.Debug.WriteLine($"Sensor: {virtualMemoryUsed.Name} : {virtualMemoryUsed.Value}");
@@ -99,9 +93,9 @@ internal sealed class MemoryPlugin : IPlugin
 
     public void BuildFetch(ResponseBuilder response)
     {
-        lock (computer)
+        lock (repository.Sync)
         {
-            memory.Update();
+            repository.Update();
 
             response.Add("apps.value ");
             response.Add(physicalMemoryUsed.Value!.Value);

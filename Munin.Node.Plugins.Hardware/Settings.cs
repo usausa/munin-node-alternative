@@ -66,6 +66,8 @@ internal sealed class CustomEntry
 
 internal sealed class Settings
 {
+    public int Expire { get; set; } = 30000;
+
     public SensorEntry[]? Sensor { get; set; }
 
     public CustomEntry? Memory { get; set; }
