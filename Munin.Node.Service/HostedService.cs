@@ -82,7 +82,11 @@ internal sealed class HostedService : IHostedService, IDisposable
                     while (request.TryGetLine(out var line))
                     {
                         response.Clear();
-                        var result = Process(line, response);
+                        if (!Process(line, response))
+                        {
+                            process = false;
+                            break;
+                        }
 
                         // Write response
                         if (response.IsEmpty)
@@ -93,12 +97,6 @@ internal sealed class HostedService : IHostedService, IDisposable
                         }
 
                         if (await WriteAsync(socket, response.AsSendMemory()).ConfigureAwait(false) < 0)
-                        {
-                            process = false;
-                            break;
-                        }
-
-                        if (!result)
                         {
                             process = false;
                             break;
