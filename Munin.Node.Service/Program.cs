@@ -1,9 +1,10 @@
 using Munin.Node.Service;
 
+Directory.SetCurrentDirectory(AppContext.BaseDirectory);
+
 var builder = Host.CreateDefaultBuilder(args);
 
 builder.UseWindowsService();
-Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
 
 builder
     .ConfigureLogging((context, logging) =>
