@@ -1,32 +1,24 @@
-# munin-node-alternative(in progress)
+# munin-node-alternative
 
 munin-node build with .net.
 
 ## Milestone
 
-## 0.1
-
-* Fix update for shared sensor or create basic plugin (for network load)
-* 2JCIE-BU plugin
-
-## 0.2
-
-* Dynamic performance counter ?
-* label alias ? (Hardware/PerformanceCounter)
-* draw/type/color setting per field
-* graph_order ?
-
-## 0.3
+## 1.1
 
 * warning/critical support ?
 * Value processing or cdef support ? (ex. 100 - x)
+* draw/type/color setting per field
+* Dynamic performance counter ?
 
-## 0.4
+## 1.2
 
 * Standalone service ?
 
-## 0.5
+## 1.3
 
 * Redis plugin ?
 * Temper plugin ?
+* Bluetooth plugin ?
+* SMART++ plugin
 * dotnet plugin ?
