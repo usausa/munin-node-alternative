@@ -1,14 +1,10 @@
 namespace Munin.Node.Plugins.PerformanceCounter;
 
-using System.Diagnostics.CodeAnalysis;
-
 internal sealed class ObjectEntry
 {
-    [AllowNull]
-    public string Category { get; set; }
+    public string Category { get; set; } = default!;
 
-    [AllowNull]
-    public string Counter { get; set; }
+    public string Counter { get; set; } = default!;
 
     public string? Instance { get; set; }
 
@@ -19,23 +15,17 @@ internal sealed class ObjectEntry
 
 internal sealed class PerformanceCounterEntry
 {
-    [AllowNull]
-    public string Name { get; set; }
+    public string Name { get; set; } = default!;
 
-    [AllowNull]
-    public ObjectEntry[] Object { get; set; }
+    public ObjectEntry[] Object { get; set; } = default!;
 
-    [AllowNull]
-    public string GraphCategory { get; set; }
+    public string GraphCategory { get; set; } = default!;
 
-    [AllowNull]
-    public string GraphTitle { get; set; }
+    public string GraphTitle { get; set; } = default!;
 
-    [AllowNull]
-    public string GraphVLabel { get; set; }
+    public string GraphVLabel { get; set; } = default!;
 
-    [AllowNull]
-    public string GraphArgs { get; set; }
+    public string GraphArgs { get; set; } = default!;
 
     public bool? GraphScale { get; set; }
 

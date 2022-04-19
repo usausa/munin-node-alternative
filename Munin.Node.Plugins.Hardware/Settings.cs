@@ -13,8 +13,7 @@ internal class FilterEntry
 
 internal sealed class SensorEntry
 {
-    [AllowNull]
-    public string Name { get; set; }
+    public string Name { get; set; } = default!;
 
     public HardwareType[]? Hardware { get; set; }
 
@@ -26,17 +25,13 @@ internal sealed class SensorEntry
 
     public FilterEntry[]? Order { get; set; }
 
-    [AllowNull]
-    public string GraphCategory { get; set; }
+    public string GraphCategory { get; set; } = default!;
 
-    [AllowNull]
-    public string GraphTitle { get; set; }
+    public string GraphTitle { get; set; } = default!;
 
-    [AllowNull]
-    public string GraphVLabel { get; set; }
+    public string GraphVLabel { get; set; } = default!;
 
-    [AllowNull]
-    public string GraphArgs { get; set; }
+    public string GraphArgs { get; set; } = default!;
 
     public bool? GraphScale { get; set; }
 

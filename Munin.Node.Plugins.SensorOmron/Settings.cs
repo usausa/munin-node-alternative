@@ -1,11 +1,8 @@
 namespace Munin.Node.Plugins.SensorOmron;
 
-using System.Diagnostics.CodeAnalysis;
-
 internal sealed class Settings
 {
-    [AllowNull]
-    public string Port { get; set; }
+    public string Port { get; set; } = default!;
 
     public int Expire { get; set; } = 30000;
 
