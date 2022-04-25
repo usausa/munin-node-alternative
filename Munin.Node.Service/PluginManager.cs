@@ -1,8 +1,5 @@
 namespace Munin.Node.Service;
 
-using System.Collections.Generic;
-using System.Linq;
-
 internal sealed class PluginManager
 {
     private readonly IPlugin[] plugins;

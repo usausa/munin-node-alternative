@@ -1,6 +1,5 @@
 namespace Munin.Node.Service;
 
-using System;
 using System.Reflection;
 using System.Runtime.Loader;
 
