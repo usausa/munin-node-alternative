@@ -70,7 +70,7 @@ internal sealed class HostedService : IHostedService, IDisposable
                 {
                     // Read line
                     var read = await socket.ReceiveAsync(request.AsReceiveMemory(), SocketFlags.None).ConfigureAwait(false);
-                    if (read < 0)
+                    if (read <= 0)
                     {
                         break;
                     }
