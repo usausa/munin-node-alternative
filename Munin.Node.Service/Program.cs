@@ -17,13 +17,16 @@ builder
         }
         else
         {
-            logging.AddEventLog();
+            if (OperatingSystem.IsWindows())
+            {
+                logging.AddEventLog();
+            }
         }
     });
 
 builder.ConfigureServices((context, services) =>
 {
-    var settings = context.Configuration.GetSection("Node").Get<Settings>();
+    var settings = context.Configuration.GetSection("Node").Get<Settings>()!;
     services.AddSingleton(settings);
 
     services.AddHostedService<HostedService>();

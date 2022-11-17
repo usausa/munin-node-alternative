@@ -7,7 +7,7 @@ internal sealed class PluginInitializer : IPluginInitializer
 {
     public void Setup(IConfiguration config, IServiceCollection services)
     {
-        var settings = config.GetSection("SensorOmron").Get<Settings>();
+        var settings = config.GetSection("SensorOmron").Get<Settings>()!;
         if (String.IsNullOrEmpty(settings.Port))
         {
             return;
