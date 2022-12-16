@@ -2,7 +2,6 @@ namespace Munin.Node.Service;
 
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 
 internal sealed class HostedService : IHostedService, IDisposable
 {
