@@ -9,13 +9,6 @@ internal sealed class HostedService : IHostedService, IDisposable
     private const int ReadBufferSize = 256;
     private const int WriteBufferSize = 8192;
 
-    private static readonly byte[] CommandNodes = Encoding.ASCII.GetBytes("nodes");
-    private static readonly byte[] CommandList = Encoding.ASCII.GetBytes("list");
-    private static readonly byte[] CommandConfig = Encoding.ASCII.GetBytes("config");
-    private static readonly byte[] CommandFetch = Encoding.ASCII.GetBytes("fetch");
-    private static readonly byte[] CommandVersion = Encoding.ASCII.GetBytes("version");
-    private static readonly byte[] CommandQuit = Encoding.ASCII.GetBytes("quit");
-
     private readonly ILogger<HostedService> logger;
 
     private readonly Listener listener;
@@ -133,17 +126,17 @@ internal sealed class HostedService : IHostedService, IDisposable
         var index = span.IndexOf((byte)' ');
         var command = index >= 0 ? span[..index] : span;
 
-        if (command.SequenceEqual(CommandNodes))
+        if (command.SequenceEqual("nodes"u8))
         {
             response.Add(Environment.MachineName);
             response.AddLineFeed();
             response.AddEndLine();
         }
-        else if (command.SequenceEqual(CommandList))
+        else if (command.SequenceEqual("list"u8))
         {
             pluginManager.BuildNames(response);
         }
-        else if (command.SequenceEqual(CommandConfig))
+        else if (command.SequenceEqual("config"u8))
         {
             IPlugin? plugin;
             if ((index >= 0) && ((plugin = pluginManager.LookupPlugin(span[(index + 1)..].Trim((byte)' '))) != null))
@@ -157,7 +150,7 @@ internal sealed class HostedService : IHostedService, IDisposable
                 response.AddEndLine();
             }
         }
-        else if (command.SequenceEqual(CommandFetch))
+        else if (command.SequenceEqual("fetch"u8))
         {
             IPlugin? plugin;
             if ((index >= 0) && ((plugin = pluginManager.LookupPlugin(span[(index + 1)..].Trim((byte)' '))) != null))
@@ -171,13 +164,13 @@ internal sealed class HostedService : IHostedService, IDisposable
                 response.AddEndLine();
             }
         }
-        else if (command.SequenceEqual(CommandVersion))
+        else if (command.SequenceEqual("version"u8))
         {
             response.Add("munin node on %s version: Munin Node for Windows ");
             response.Add(typeof(HostedService).Assembly.GetName().Version!.ToString());
             response.AddLineFeed();
         }
-        else if (command.SequenceEqual(CommandQuit))
+        else if (command.SequenceEqual("quit"u8))
         {
             return false;
         }

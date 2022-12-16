@@ -23,7 +23,7 @@ internal sealed class PluginLoadContext : AssemblyLoadContext
         return null;
     }
 
-    protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
+    protected override nint LoadUnmanagedDll(string unmanagedDllName)
     {
         var libraryPath = resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
         if (libraryPath != null)
