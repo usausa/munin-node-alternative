@@ -1,5 +1,7 @@
 using Munin.Node.Service;
 
+#pragma warning disable CA1852
+
 Directory.SetCurrentDirectory(AppContext.BaseDirectory);
 
 var builder = Host.CreateDefaultBuilder(args);

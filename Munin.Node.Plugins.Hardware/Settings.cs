@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 using LibreHardwareMonitor.Hardware;
 
-internal class FilterEntry
+internal sealed class FilterEntry
 {
     public HardwareType? Type { get; set; }
 

@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 using LibreHardwareMonitor.Hardware;
 
-internal class SensorRepository
+internal sealed class SensorRepository
 {
     private readonly Computer computer;
 

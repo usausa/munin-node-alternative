@@ -4,7 +4,7 @@ using System.Buffers.Binary;
 using System.Diagnostics;
 using System.IO.Ports;
 
-internal class SensorRepository
+internal sealed class SensorRepository
 {
     private static readonly byte[] Command =
     {
