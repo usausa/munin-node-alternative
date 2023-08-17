@@ -72,13 +72,13 @@ internal sealed class SensorPlugin : IPlugin
     {
         if (sensor.Hardware.HardwareType == HardwareType.Network)
         {
-            return sensor.Identifier.ToString()[1..].Replace('/', '_')
+            return sensor.Identifier.ToString()![1..].Replace('/', '_')
                 .Replace("-", string.Empty, StringComparison.Ordinal)
                 .Replace("{", string.Empty, StringComparison.Ordinal)
                 .Replace("}", string.Empty, StringComparison.Ordinal);
         }
 
-        return sensor.Identifier.ToString()[1..].Replace('/', '_');
+        return sensor.Identifier.ToString()![1..].Replace('/', '_');
     }
 
     private static string MakeLabelName(bool singleHardware, bool singleSensor, ISensor sensor)

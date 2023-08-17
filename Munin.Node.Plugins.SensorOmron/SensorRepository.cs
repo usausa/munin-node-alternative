@@ -169,14 +169,12 @@ internal sealed class SensorRepository
 
             try
             {
-                using var port = new SerialPort(portName)
-                {
-                    BaudRate = 115200,
-                    DataBits = 8,
-                    StopBits = StopBits.One,
-                    Parity = Parity.None,
-                    Handshake = Handshake.None
-                };
+                using var port = new SerialPort(portName);
+                port.BaudRate = 115200;
+                port.DataBits = 8;
+                port.StopBits = StopBits.One;
+                port.Parity = Parity.None;
+                port.Handshake = Handshake.None;
 
                 port.ReadTimeout = 5000;
 
