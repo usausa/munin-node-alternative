@@ -1,5 +1,6 @@
 namespace Munin.Node;
 
+#pragma warning disable CA1819
 public interface IPlugin
 {
     byte[] Name { get; }
@@ -8,3 +9,4 @@ public interface IPlugin
 
     void BuildFetch(ResponseBuilder response);
 }
+#pragma warning restore CA1819
