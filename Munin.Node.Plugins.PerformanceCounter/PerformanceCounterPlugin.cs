@@ -34,10 +34,10 @@ internal sealed class PerformanceCounterPlugin : IPlugin, IDisposable
         Name = Encoding.ASCII.GetBytes(entry.Name);
 
         var list = entry.Object
-            .Select(x => new { Object = x, Counters = Create(x.Category, x.Counter, x.Instance).ToList() })
+            .Select(static x => new { Object = x, Counters = Create(x.Category, x.Counter, x.Instance).ToList() })
             .ToList();
         var singleCounter = list.Count == 1;
-        var singleInstance = list.All(x => x.Counters.Count == 1);
+        var singleInstance = list.All(static x => x.Counters.Count == 1);
         counters = list
             .SelectMany((x, i) => x.Counters
                 .Select((y, j) => new CounterInfo
@@ -58,7 +58,7 @@ internal sealed class PerformanceCounterPlugin : IPlugin, IDisposable
         // Debug
 #if DEBUG
         System.Diagnostics.Debug.WriteLine($"[{entry.Name}]");
-        foreach (var counter in list.SelectMany(x => x.Counters))
+        foreach (var counter in list.SelectMany(static x => x.Counters))
         {
             System.Diagnostics.Debug.WriteLine($"Counter: ({counter.CategoryName})({counter.CounterName})({counter.InstanceName})");
         }

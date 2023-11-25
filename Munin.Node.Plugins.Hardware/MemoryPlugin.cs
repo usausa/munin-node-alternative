@@ -23,7 +23,7 @@ internal sealed class MemoryPlugin : IPlugin
         var name = entry.Name ?? "memory";
         Name = Encoding.ASCII.GetBytes(name);
 
-        foreach (var sensor in repository.EnumerableSensor().Where(x => (x.Hardware.HardwareType == HardwareType.Memory) && (x.SensorType == SensorType.Data)))
+        foreach (var sensor in repository.EnumerableSensor().Where(static x => (x.Hardware.HardwareType == HardwareType.Memory) && (x.SensorType == SensorType.Data)))
         {
             switch (sensor.Name)
             {

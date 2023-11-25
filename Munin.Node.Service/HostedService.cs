@@ -39,7 +39,7 @@ internal sealed class HostedService : IHostedService, IDisposable
         return Task.CompletedTask;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Design", "CA1031: not catch general exception types", Justification = "Ignore")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031: not catch general exception types", Justification = "Ignore")]
     private void OnClientAccepted(Socket parameter)
     {
         _ = Task.Run(async () =>
@@ -109,12 +109,12 @@ internal sealed class HostedService : IHostedService, IDisposable
             {
                 if (logger.IsEnabled(LogLevel.Debug))
                 {
-                    logger.LogDebug(ex, "Connection error.");
+                    logger.ErrorConnectionError(ex);
                 }
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Connection error.");
+                logger.ErrorConnectionError(ex);
             }
         });
     }

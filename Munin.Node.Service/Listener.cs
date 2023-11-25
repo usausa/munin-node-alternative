@@ -48,7 +48,7 @@ internal sealed class Listener : IDisposable
             }
             catch (SocketException ex)
             {
-                logger.LogError(ex, "Listener start failed");
+                logger.ErrorListenerStartFailed(ex);
 
                 listener?.Dispose();
                 listener = null;
@@ -56,7 +56,7 @@ internal sealed class Listener : IDisposable
             }
         }
 
-        logger.LogInformation("Listener started.");
+        logger.InfoListenerStarted();
 
         StartAccept();
     }
@@ -74,7 +74,7 @@ internal sealed class Listener : IDisposable
             listener = null;
         }
 
-        logger.LogInformation("Listener stopped.");
+        logger.InfoListenerStopped();
     }
 
     private void StartAccept()
@@ -98,7 +98,7 @@ internal sealed class Listener : IDisposable
         }
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Design", "CA1031: not catch general exception types", Justification = "Ignore")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031: not catch general exception types", Justification = "Ignore")]
     private void ProcessAccept(SocketAsyncEventArgs e)
     {
         if (e.SocketError == SocketError.Success)
@@ -109,14 +109,14 @@ internal sealed class Listener : IDisposable
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Accept failed.");
+                logger.ErrorAcceptFailed(ex);
             }
 
             StartAccept();
         }
         else
         {
-            logger.LogWarning("Accept failed. error=[{Error}]", e.SocketError);
+            logger.WarnAcceptFailed(e.SocketError);
         }
     }
 }

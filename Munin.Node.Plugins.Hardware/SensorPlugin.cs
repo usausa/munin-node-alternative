@@ -36,19 +36,19 @@ internal sealed class SensorPlugin : IPlugin
         var target = repository.EnumerableSensor()
             .Where(Filter)
             .OrderBy(x => entry.Order is null || IsMatch(x, entry.Order))
-            .ThenBy(x => x.Hardware.HardwareType)
-            .ThenBy(x => x.Hardware.Identifier.ToString())
+            .ThenBy(static x => x.Hardware.HardwareType)
+            .ThenBy(static x => x.Hardware.Identifier.ToString())
             .ToList();
         var grouping = target
-            .GroupBy(x => x.Hardware.Identifier)
-            .ToDictionary(x => x.Key.ToString(), x => new
+            .GroupBy(static x => x.Hardware.Identifier)
+            .ToDictionary(static x => x.Key.ToString(), static x => new
             {
                 x.First().Hardware,
                 SensorCount = x.Count()
             });
 
         var singleHardware = grouping.Count == 1;
-        var singleSensor = grouping.All(x => x.Value.SensorCount == 1);
+        var singleSensor = grouping.All(static x => x.Value.SensorCount == 1);
         sensors = target
             .Select(x => new SensorInfo
             {

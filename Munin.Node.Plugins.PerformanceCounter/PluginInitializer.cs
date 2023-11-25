@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 [SupportedOSPlatform("windows")]
 internal sealed class PluginInitializer : IPluginInitializer
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "Ignore")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Ignore")]
     public void Setup(IConfiguration config, IServiceCollection services)
     {
         var settings = config.GetSection("PerformanceCounter").Get<Settings>()!;

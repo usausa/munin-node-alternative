@@ -27,7 +27,7 @@ internal sealed class PluginInitializer : IPluginInitializer
                 null,
                 new SensorField[]
                 {
-                    new("temperature", "Temperature", x => x.Temperature)
+                    new("temperature", "Temperature", static x => x.Temperature)
                 }));
         }
         if (settings.Humidity)
@@ -42,7 +42,7 @@ internal sealed class PluginInitializer : IPluginInitializer
                 true,
                 new SensorField[]
                 {
-                    new("humidity", "Humidity", x => x.Humidity)
+                    new("humidity", "Humidity", static x => x.Humidity)
                 }));
         }
         if (settings.Light)
@@ -57,7 +57,7 @@ internal sealed class PluginInitializer : IPluginInitializer
                 null,
                 new SensorField[]
                 {
-                    new("light", "Light", x => x.Light)
+                    new("light", "Light", static x => x.Light)
                 }));
         }
         if (settings.Pressure)
@@ -72,7 +72,7 @@ internal sealed class PluginInitializer : IPluginInitializer
                 null,
                 new SensorField[]
                 {
-                    new("pressure", "Barometric pressure", x => x.Pressure)
+                    new("pressure", "Barometric pressure", static x => x.Pressure)
                 }));
         }
         if (settings.Noise)
@@ -87,7 +87,7 @@ internal sealed class PluginInitializer : IPluginInitializer
                 null,
                 new SensorField[]
                 {
-                    new("noise", "Sound noise", x => x.Noise)
+                    new("noise", "Sound noise", static x => x.Noise)
                 }));
         }
         if (settings.Equivalent)
@@ -102,8 +102,8 @@ internal sealed class PluginInitializer : IPluginInitializer
                 null,
                 new SensorField[]
                 {
-                    new("etvoc", "eTVOC", x => x.Etvoc),
-                    new("eco2", "eCO2", x => x.Eco2)
+                    new("etvoc", "eTVOC", static x => x.Etvoc),
+                    new("eco2", "eCO2", static x => x.Eco2)
                 }));
         }
         if (settings.Index)
@@ -118,8 +118,8 @@ internal sealed class PluginInitializer : IPluginInitializer
                 false,
                 new SensorField[]
                 {
-                    new("discomfort", "Discomfort index", x => x.Discomfort),
-                    new("heat", "Heat stroke", x => x.Heat)
+                    new("discomfort", "Discomfort index", static x => x.Discomfort),
+                    new("heat", "Heat stroke", static x => x.Heat)
                 }));
         }
         if (settings.Seismic)
@@ -134,7 +134,7 @@ internal sealed class PluginInitializer : IPluginInitializer
                 null,
                 new SensorField[]
                 {
-                    new("seismic", "Seismic intensity", x => x.Seismic)
+                    new("seismic", "Seismic intensity", static x => x.Seismic)
                 }));
         }
     }
