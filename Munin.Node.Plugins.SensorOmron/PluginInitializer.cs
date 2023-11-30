@@ -25,10 +25,9 @@ internal sealed class PluginInitializer : IPluginInitializer
                 "C",
                 "-l 0 -u 40",
                 null,
-                new SensorField[]
-                {
+                [
                     new("temperature", "Temperature", static x => x.Temperature)
-                }));
+                ]));
         }
         if (settings.Humidity)
         {
@@ -40,10 +39,9 @@ internal sealed class PluginInitializer : IPluginInitializer
                 "%",
                 "-l 0 -u 100",
                 true,
-                new SensorField[]
-                {
+                [
                     new("humidity", "Humidity", static x => x.Humidity)
-                }));
+                ]));
         }
         if (settings.Light)
         {
@@ -55,10 +53,9 @@ internal sealed class PluginInitializer : IPluginInitializer
                 "lx",
                 "-b 1000 -l 0",
                 null,
-                new SensorField[]
-                {
+                [
                     new("light", "Light", static x => x.Light)
-                }));
+                ]));
         }
         if (settings.Pressure)
         {
@@ -70,10 +67,9 @@ internal sealed class PluginInitializer : IPluginInitializer
                 "hPa",
                 "-b 1000 -l 0",
                 null,
-                new SensorField[]
-                {
+                [
                     new("pressure", "Barometric pressure", static x => x.Pressure)
-                }));
+                ]));
         }
         if (settings.Noise)
         {
@@ -85,10 +81,9 @@ internal sealed class PluginInitializer : IPluginInitializer
                 "dB",
                 "-b 1000 -l 0",
                 null,
-                new SensorField[]
-                {
+                [
                     new("noise", "Sound noise", static x => x.Noise)
-                }));
+                ]));
         }
         if (settings.Equivalent)
         {
@@ -100,11 +95,10 @@ internal sealed class PluginInitializer : IPluginInitializer
                 "ppb / ppm",
                 "-b 1000 -l 0",
                 null,
-                new SensorField[]
-                {
+                [
                     new("etvoc", "eTVOC", static x => x.Etvoc),
                     new("eco2", "eCO2", static x => x.Eco2)
-                }));
+                ]));
         }
         if (settings.Index)
         {
@@ -116,11 +110,10 @@ internal sealed class PluginInitializer : IPluginInitializer
                 "%",
                 "-l 0 -u 100",
                 false,
-                new SensorField[]
-                {
+                [
                     new("discomfort", "Discomfort index", static x => x.Discomfort),
                     new("heat", "Heat stroke", static x => x.Heat)
-                }));
+                ]));
         }
         if (settings.Seismic)
         {
@@ -132,10 +125,9 @@ internal sealed class PluginInitializer : IPluginInitializer
                 "scale",
                 "-b 1000 -l 0",
                 null,
-                new SensorField[]
-                {
+                [
                     new("seismic", "Seismic intensity", static x => x.Seismic)
-                }));
+                ]));
         }
     }
 }

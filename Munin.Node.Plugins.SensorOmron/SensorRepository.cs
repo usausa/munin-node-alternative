@@ -6,13 +6,15 @@ using System.IO.Ports;
 
 internal sealed class SensorRepository
 {
+#pragma warning disable IDE0055
     private static readonly byte[] Command =
-    {
+    [
         0x52, 0x42,         // Header
         0x05, 0x00,         // Length 5
         0x01, 0x21, 0x50,   // Read 0x5021
         0x00, 0x00          // CRC Area
-    };
+    ];
+#pragma warning restore IDE0055
 
     private readonly object sync = new();
 

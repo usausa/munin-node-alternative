@@ -11,7 +11,7 @@ internal struct RequestBuffer : IDisposable
 
     private int length;
 
-    public bool HasRemaining
+    public readonly bool HasRemaining
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => (buffer.Length - length) > 0;
@@ -25,16 +25,16 @@ internal struct RequestBuffer : IDisposable
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Dispose()
+    public readonly void Dispose()
     {
         ArrayPool<byte>.Shared.Return(buffer);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Memory<byte> AsReceiveMemory() => buffer.AsMemory(length, buffer.Length - length);
+    public readonly Memory<byte> AsReceiveMemory() => buffer.AsMemory(length, buffer.Length - length);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool TryGetLine(out Memory<byte> line)
+    public readonly bool TryGetLine(out Memory<byte> line)
     {
         var index = buffer.AsSpan(start, length - start).IndexOf((byte)'\n');
         if (index < 0)

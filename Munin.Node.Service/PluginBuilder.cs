@@ -4,7 +4,7 @@ using System.Reflection;
 
 internal sealed class PluginBuilder
 {
-    private readonly List<Assembly> modules = new();
+    private readonly List<Assembly> modules = [];
 
     public void AddModule(string path)
     {
