@@ -98,11 +98,11 @@ internal sealed class Listener : IDisposable
         }
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031: not catch general exception types", Justification = "Ignore")]
     private void ProcessAccept(SocketAsyncEventArgs e)
     {
         if (e.SocketError == SocketError.Success)
         {
+#pragma warning disable CA1031
             try
             {
                 OnClientAccepted?.Invoke(e.AcceptSocket!);
@@ -111,6 +111,7 @@ internal sealed class Listener : IDisposable
             {
                 logger.ErrorAcceptFailed(ex);
             }
+#pragma warning restore CA1031
 
             StartAccept();
         }

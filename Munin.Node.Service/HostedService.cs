@@ -39,16 +39,17 @@ internal sealed class HostedService : IHostedService, IDisposable
         return Task.CompletedTask;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031: not catch general exception types", Justification = "Ignore")]
     private void OnClientAccepted(Socket parameter)
     {
         _ = Task.Run(async () =>
         {
-            using var socket = parameter;
-            using var request = new RequestBuffer(ReadBufferSize);
-            using var response = new ResponseBuilder(WriteBufferSize);
+#pragma warning disable CA1031
             try
             {
+                using var socket = parameter;
+                using var request = new RequestBuffer(ReadBufferSize);
+                using var response = new ResponseBuilder(WriteBufferSize);
+
                 response.Add("# munin node at ");
                 response.Add(Environment.MachineName);
                 response.AddLineFeed();
@@ -116,6 +117,7 @@ internal sealed class HostedService : IHostedService, IDisposable
             {
                 logger.ErrorConnectionError(ex);
             }
+#pragma warning restore CA1031
         });
     }
 
