@@ -9,6 +9,8 @@ public sealed class ResponseBuilder : IDisposable
 {
     private static readonly Encoding Ascii = Encoding.ASCII;
 
+    private static readonly byte[] Eol = [(byte)'.', (byte)'\n'];
+
     private byte[] buffer;
 
     private int length;
@@ -125,6 +127,6 @@ public sealed class ResponseBuilder : IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void AddEndLine()
     {
-        Add(stackalloc byte[] { (byte)'.', (byte)'\n' });
+        Add(Eol);
     }
 }
