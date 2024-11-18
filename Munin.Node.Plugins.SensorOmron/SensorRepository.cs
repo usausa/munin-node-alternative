@@ -4,6 +4,7 @@ using System.Buffers.Binary;
 using System.Diagnostics;
 using System.IO.Ports;
 
+#pragma warning disable IDE0032
 internal sealed class SensorRepository
 {
 #pragma warning disable IDE0055
@@ -26,7 +27,6 @@ internal sealed class SensorRepository
 
     private readonly byte[] buffer = new byte[256];
 
-#pragma warning disable IDE0032
     private float? temperature;
     private float? humidity;
     private float? light;
@@ -37,7 +37,6 @@ internal sealed class SensorRepository
     private float? etvoc;
     private float? eco2;
     private float? seismic;
-#pragma warning restore IDE0032
 
     public float? Temperature
     {
@@ -261,3 +260,4 @@ internal sealed class SensorRepository
         return crc;
     }
 }
+#pragma warning restore IDE0032
