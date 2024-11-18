@@ -16,7 +16,7 @@ internal sealed class SensorRepository
     ];
 #pragma warning restore IDE0055
 
-    private readonly object sync = new();
+    private readonly Lock sync = new();
 
     private readonly string portName;
 
@@ -26,6 +26,7 @@ internal sealed class SensorRepository
 
     private readonly byte[] buffer = new byte[256];
 
+#pragma warning disable IDE0032
     private float? temperature;
     private float? humidity;
     private float? light;
@@ -36,6 +37,7 @@ internal sealed class SensorRepository
     private float? etvoc;
     private float? eco2;
     private float? seismic;
+#pragma warning restore IDE0032
 
     public float? Temperature
     {

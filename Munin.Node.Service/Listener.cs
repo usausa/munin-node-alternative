@@ -7,7 +7,7 @@ internal sealed class Listener : IDisposable
 {
     private readonly ILogger<Listener> logger;
 
-    private readonly object sync = new();
+    private readonly Lock sync = new();
 
     private readonly EndPoint endPoint;
 

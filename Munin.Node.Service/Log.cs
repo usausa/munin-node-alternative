@@ -3,7 +3,7 @@ namespace Munin.Node.Service;
 using System.Net.Sockets;
 
 #pragma warning disable SYSLIB1006
-public static partial class Log
+internal static partial class Log
 {
     [LoggerMessage(Level = LogLevel.Information, Message = "Listener started.")]
     public static partial void InfoListenerStarted(this ILogger logger);

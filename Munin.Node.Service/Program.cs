@@ -9,7 +9,7 @@ var builder = Host.CreateDefaultBuilder(args);
 builder.UseWindowsService();
 
 builder
-    .ConfigureLogging((context, logging) =>
+    .ConfigureLogging(static (context, logging) =>
     {
         logging.ClearProviders();
         if (context.HostingEnvironment.IsDevelopment())
@@ -26,7 +26,7 @@ builder
         }
     });
 
-builder.ConfigureServices((context, services) =>
+builder.ConfigureServices(static (context, services) =>
 {
     var settings = context.Configuration.GetSection("Node").Get<Settings>()!;
     services.AddSingleton(settings);
