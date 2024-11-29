@@ -6,10 +6,6 @@
 
 munin-node alternative implementation by .NET
 
-# Link
-
-- [prometheus-exporter-alternative](https://github.com/usausa/prometheus-exporter-alternative)
-
 # Install
 
 ```
